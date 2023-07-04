@@ -1,63 +1,55 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DataAccessLayer.DBConnection
+namespace DataAccessLayer.DBConnection;
+
+public class DBContext
 {
-    public class DBContext
+    private readonly string connectionString;
+
+    public DBContext()
     {
-        private readonly string connectionString;
+        var configurationBuilder = new ConfigurationBuilder();
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+        configurationBuilder.AddJsonFile(path, false);
 
-        public DBContext()
+        var root = configurationBuilder.Build();
+        connectionString = root.GetSection("ConnectionStrings").GetSection("db").Value!;
+    }
+
+    public SqlConnection GetConnection()
+    {
+        return new SqlConnection(connectionString);
+    }
+
+    public async Task<SqlDataReader> ExecuteQueryAsync(string query)
+    {
+        try
         {
-            var configurationBuilder = new ConfigurationBuilder();
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-            configurationBuilder.AddJsonFile(path, false);
-
-            var root = configurationBuilder.Build();
-            connectionString = root.GetSection("ConnectionStrings").GetSection("db").Value!;
+            SqlConnection conn = GetConnection();
+            SqlCommand command = new(query, conn);
+            await conn.OpenAsync();
+            SqlDataReader reader = await command.ExecuteReaderAsync();
+            return reader;
         }
-
-        public SqlConnection GetConnection()
+        catch (Exception ex)
         {
-            return new SqlConnection(connectionString);
+            throw new Exception(ex.Message);
         }
+    }
 
-        public async Task<SqlDataReader> ExecuteQueryAsync(string query)
+    public async Task<bool> ExecuteNonQueryAsync(string query)
+    {
+        using SqlConnection conn = GetConnection();
+        try
         {
-            try
-            {
-                SqlConnection conn = GetConnection();
-                SqlCommand command = new(query, conn);
-                await conn.OpenAsync();
-                SqlDataReader reader = await command.ExecuteReaderAsync();
-                return reader;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            SqlCommand command = new(query, conn);
+            await conn.OpenAsync();
+            return await command.ExecuteNonQueryAsync() > 0;
         }
-
-        public async Task<bool> ExecuteNonQueryAsync(string query)
+        catch (Exception ex)
         {
-            using SqlConnection conn = GetConnection();
-            try
-            {
-                SqlCommand command = new(query, conn);
-                await conn.OpenAsync();
-                return await command.ExecuteNonQueryAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            throw new Exception(ex.Message);
         }
     }
 }

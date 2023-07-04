@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DataAccessLayer.Domain;
+﻿namespace DataAccessLayer.Domain;
 
 public partial class SystemRole
 {
