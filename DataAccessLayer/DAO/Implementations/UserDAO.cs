@@ -1,10 +1,11 @@
-﻿using DataAccessLayer.DBConnection;
+﻿using DataAccessLayer.DAO.Interfaces;
+using DataAccessLayer.DBConnection;
 using DataAccessLayer.Domain;
 using System.Data.SqlClient;
 
-namespace DataAccessLayer.DAO;
+namespace DataAccessLayer.DAO.Implementations;
 
-public class UserDAO
+public class UserDAO : IUserDAO
 {
     private readonly DBContext _dbContext;
 
@@ -98,15 +99,15 @@ public class UserDAO
         return response;
     }
 
-    public async Task<User> LogIn(string username, string password)
+    public async Task<User> LogIn(User request)
     {
         string query =
             $@"select u.UserID, u.FullName, u.Username, u.[Password], d.*, cr.*, sr.*
-                from Users u 
-                join Departments d on d.DepID = u.DepID
-                join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
-                join SystemRoles sr on sr.SysRoleID = u.SysRoleID
-                where u.Username = '{username}' and u.[Password] = '{password}'";
+            from Users u 
+            join Departments d on d.DepID = u.DepID
+            join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
+            join SystemRoles sr on sr.SysRoleID = u.SysRoleID
+            where u.Username = '{request.Username}' and u.[Password] = '{request.Password}'";
         User response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
         {
@@ -139,20 +140,15 @@ public class UserDAO
         return response;
     }
 
-    public async Task<bool> SignUp(
-        string fullName,
-        string username,
-        string password,
-        int depID,
-        int compRoleID,
-        int sysRoleID
-    )
+    public async Task<bool> SignUp(User request)
     {
         string query =
-            $@"select * from Users where Username = ''
+            $@"select * from Users where Username = '{request.Username}'
                 if @@rowcount = 0
 	                insert into Users values
-                        ('{fullName}', '{username}', '{password}', {depID}, {compRoleID}, {sysRoleID})";
+                        ('{request.FullName}', '{request.Username}', 
+                        {request.Password}', {request.Dep.DepId},
+                        {request.CompRole.CompRoleId}, {request.SysRole.SysRoleId})";
         return await _dbContext.ExecuteNonQueryAsync(query);
     }
 

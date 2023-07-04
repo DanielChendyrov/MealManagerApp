@@ -1,6 +1,12 @@
-﻿using DataAccessLayer.DAO;
+﻿using DataAccessLayer.DAO.Implementations;
 using DataAccessLayer.Domain;
 
-MealDAO dao = new();
-List<Serving> list = await dao.GetPersonalMonthlyStats(1);
-Console.WriteLine(list.Count);
+internal class Program
+{
+    private static async Task Main(string[] args)
+    {
+        UserDAO dao = new();
+        List<User> list = await dao.GetAllUsers();
+        Console.WriteLine(list.Count);
+    }
+}

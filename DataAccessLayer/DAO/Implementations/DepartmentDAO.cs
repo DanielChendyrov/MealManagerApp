@@ -1,11 +1,12 @@
-﻿using DataAccessLayer.DBConnection;
+﻿using DataAccessLayer.DAO.Interfaces;
+using DataAccessLayer.DBConnection;
 using DataAccessLayer.Domain;
 using Microsoft.IdentityModel.Tokens;
 using System.Data.SqlClient;
 
-namespace DataAccessLayer.DAO;
+namespace DataAccessLayer.DAO.Implementations;
 
-public class DepartmentDAO
+public class DepartmentDAO : IDepartmentDAO
 {
     private readonly DBContext _dbContext;
 

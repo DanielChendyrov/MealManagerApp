@@ -1,4 +1,4 @@
-﻿namespace BusinessObject.DTO.Response
+﻿namespace BusinessObject.DTO
 {
     public class UserDTO
     {

@@ -1,10 +1,11 @@
-﻿using DataAccessLayer.DBConnection;
+﻿using DataAccessLayer.DAO.Interfaces;
+using DataAccessLayer.DBConnection;
 using DataAccessLayer.Domain;
 using System.Data.SqlClient;
 
-namespace DataAccessLayer.DAO;
+namespace DataAccessLayer.DAO.Implementations;
 
-public class MealDAO
+public class MealDAO : IMealDAO
 {
     private readonly DBContext _dbContext;
 
