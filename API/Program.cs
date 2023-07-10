@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(opt =>
             In = ParameterLocation.Header,
             Description = "Please enter a valid token",
             Name = "Authorization",
-            Type = SecuritySchemeType.Http,
+            Type = SecuritySchemeType.ApiKey,
             BearerFormat = "JWT",
             Scheme = "Bearer"
         }
@@ -68,6 +68,8 @@ builder.Services
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IUserManager, UserManager>();
 builder.Services.AddScoped<IDepartmentManager, DepartmentManager>();
+builder.Services.AddScoped<IRoleManager, RoleManager>();
+builder.Services.AddScoped<IMealManager, MealManager>();
 builder.Services.AddScoped<IUserDAO, UserDAO>();
 builder.Services.AddScoped<IDepartmentDAO, DepartmentDAO>();
 builder.Services.AddScoped<IRoleDAO, RoleDAO>();
@@ -92,8 +94,8 @@ app.UseCors(opt =>
     opt.AllowAnyOrigin();
 });
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

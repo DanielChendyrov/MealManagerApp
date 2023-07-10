@@ -8,7 +8,7 @@ namespace BusinessObject.Manager.Interfaces
         Task<UserDTO> LogIn(LogInDTO request);
         Task<UserDTO> SignUp(SignUpDTO request);
         Task<bool> EditUser(UserDTO request);
-        Task<IEnumerable<UserDTO>> GetAllUsers();
-        Task<IEnumerable<UserDTO>> GetUsersByDep(int depID);
+        Task<List<UserDTO>> GetAllUsers();
+        Task<List<UserDTO>> GetUsersByDep(int depID);
     }
 }

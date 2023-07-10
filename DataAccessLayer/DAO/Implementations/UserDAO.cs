@@ -34,6 +34,9 @@ public class UserDAO : IUserDAO
                         FullName = reader["FullName"].ToString()!,
                         Username = reader["Username"].ToString()!,
                         Password = reader["Password"].ToString()!,
+                        DepId = Convert.ToInt32(reader["DepID"]),
+                        CompRoleId = Convert.ToInt32(reader["CompRoleID"]),
+                        SysRoleId = Convert.ToInt32(reader["SysRoleID"]),
                         Dep = new()
                         {
                             DepId = Convert.ToInt32(reader["DepID"]),
@@ -77,6 +80,9 @@ public class UserDAO : IUserDAO
                         FullName = reader["FullName"].ToString()!,
                         Username = reader["Username"].ToString()!,
                         Password = reader["Password"].ToString()!,
+                        DepId = Convert.ToInt32(reader["DepID"]),
+                        CompRoleId = Convert.ToInt32(reader["CompRoleID"]),
+                        SysRoleId = Convert.ToInt32(reader["SysRoleID"]),
                         Dep = new()
                         {
                             DepId = Convert.ToInt32(reader["DepID"]),
@@ -119,6 +125,9 @@ public class UserDAO : IUserDAO
                     FullName = reader["FullName"].ToString()!,
                     Username = reader["Username"].ToString()!,
                     Password = reader["Password"].ToString()!,
+                    DepId = Convert.ToInt32(reader["DepID"]),
+                    CompRoleId = Convert.ToInt32(reader["CompRoleID"]),
+                    SysRoleId = Convert.ToInt32(reader["SysRoleID"]),
                     Dep = new()
                     {
                         DepId = Convert.ToInt32(reader["DepID"]),
@@ -147,8 +156,8 @@ public class UserDAO : IUserDAO
                 if @@rowcount = 0
 	                insert into Users values
                         ('{request.FullName}', '{request.Username}', 
-                        {request.Password}', {request.Dep.DepId},
-                        {request.CompRole.CompRoleId}, {request.SysRole.SysRoleId})";
+                        '{request.Password}', {request.DepId},
+                        {request.CompRoleId}, {request.SysRoleId})";
         return await _dbContext.ExecuteNonQueryAsync(query);
     }
 

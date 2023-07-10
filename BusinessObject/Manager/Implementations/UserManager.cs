@@ -25,16 +25,16 @@ public class UserManager : IUserManager
         return response;
     }
 
-    public async Task<IEnumerable<UserDTO>> GetAllUsers()
+    public async Task<List<UserDTO>> GetAllUsers()
     {
         var response = await UserDAO.GetAllUsers();
-        return Mapper.Map<IEnumerable<UserDTO>>(response);
+        return Mapper.Map<List<UserDTO>>(response);
     }
 
-    public async Task<IEnumerable<UserDTO>> GetUsersByDep(int depID)
+    public async Task<List<UserDTO>> GetUsersByDep(int depID)
     {
         var response = await UserDAO.GetUsersByDep(depID);
-        return Mapper.Map<IEnumerable<UserDTO>>(response);
+        return Mapper.Map<List<UserDTO>>(response);
     }
 
     public async Task<UserDTO> LogIn(LogInDTO request)
@@ -45,8 +45,12 @@ public class UserManager : IUserManager
 
     public async Task<UserDTO> SignUp(SignUpDTO request)
     {
-        await UserDAO.SignUp(Mapper.Map<User>(request));
-        LogInDTO forward = new() { Username = request.Username, Password = request.Password };
-        return await LogIn(forward);
+        bool response = await UserDAO.SignUp(Mapper.Map<User>(request));
+        if (response)
+        {
+            LogInDTO forward = new() { Username = request.Username, Password = request.Password };
+            return await LogIn(forward);
+        }
+        return new();
     }
 }

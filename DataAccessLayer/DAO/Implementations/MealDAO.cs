@@ -36,6 +36,7 @@ public class MealDAO : IMealDAO
                         BookedDate = Convert.ToDateTime(reader["BookedDate"]),
                         FormId = Convert.ToInt32(reader["FormID"]),
                         UserId = Convert.ToInt32(reader["UserID"]),
+                        MealId = Convert.ToInt32(reader["MealID"]),
                         Meal = new()
                         {
                             MealId = Convert.ToInt32(reader["MealID"]),
@@ -67,10 +68,13 @@ public class MealDAO : IMealDAO
                     new Serving
                     {
                         Quantity = Convert.ToInt32(reader["Quantity"]),
+                        UserId = Convert.ToInt32(reader["UserID"]),
+                        MealId = Convert.ToInt32(reader["MealID"]),
                         User = new()
                         {
                             UserId = Convert.ToInt32(reader["UserID"]),
                             FullName = reader["FullName"].ToString()!,
+                            DepId = Convert.ToInt32(reader["DepID"]),
                             Dep = new()
                             {
                                 DepId = Convert.ToInt32(reader["DepID"]),
