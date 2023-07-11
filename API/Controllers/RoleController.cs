@@ -1,5 +1,4 @@
-﻿using BusinessObject.DTO;
-using BusinessObject.Manager.Interfaces;
+﻿using BusinessObject.Manager.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

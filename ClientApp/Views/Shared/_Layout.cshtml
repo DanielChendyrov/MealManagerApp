@@ -1,31 +1,81 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-16" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ClientApp</title>
+    <title>@ViewData["Title"] - Quản lý ăn ca</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ClientApp.styles.css" asp-append-version="true" />
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ClientApp</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ABC</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                    <div class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                    </div>
+                    @{
+                        int? uid = Context.Session.GetInt32("UserID");
+                        if (uid != null && uid > 0)
+                        {
+                            string? sysRole = Context.Session.GetString("SysRole");
+                            if (sysRole != null && sysRole == "Admin")
+                            {
+                                <div class="collapse navbar-collapse" id="adminDropdown">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle" id="adminDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Quản trị viên
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="adminDropdownLink">
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="InterfaceManager">Quản lý giao diện</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="UserManager">Quản lý người dùng</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="DepartmentManager">Quản lý phòng ban</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+
+                            <div class="collapse navbar-collapse" id="formDropdown">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" id="formDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Đăng ký ăn ca
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="formDropdownLink">
+                                            <li>
+                                                <a class="dropdown-item" asp-area="" asp-controller="Form" asp-action="Personal">Đăng ký suất cá nhân</a>
+                                            </li>
+                                            @{
+                                                string? compRole = Context.Session.GetString("CompRole");
+                                                if (compRole != null && compRole == "Department Rep")
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item" asp-area="" asp-controller="Form" asp-action="Department">Đăng ký suất tập thể</a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                    }
                 </div>
             </div>
         </nav>
@@ -38,7 +88,9 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - ClientApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <span class="fw-bold m-0">ABC Ltd - XYZ Group</span> |
+            <span class="fw-light m-0">Email: abc@xyz.domain.com</span> |
+            <span class="fw-light m-0">Tel: (+84) 9 69 420 113</span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

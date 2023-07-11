@@ -81,7 +81,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LogInDTO request)
+    public async Task<IActionResult> LogIn(LogInDTO request)
     {
         try
         {

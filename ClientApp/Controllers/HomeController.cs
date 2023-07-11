@@ -15,11 +15,11 @@ namespace ClientApp.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
+            int? uid = HttpContext.Session.GetInt32("UserID");
+            if (uid != null && uid > 0)
+            {
+                return Redirect("/Form/Personal");
+            }
             return View();
         }
 
