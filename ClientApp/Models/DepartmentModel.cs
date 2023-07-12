@@ -3,5 +3,5 @@
 public class DepartmentModel
 {
     public int DepID { get; set; }
-    public string DepName { get; set; }
+    public string? DepName { get; set; }
 }

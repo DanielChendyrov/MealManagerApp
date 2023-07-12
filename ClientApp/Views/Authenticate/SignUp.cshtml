@@ -3,3 +3,78 @@
 }
 
 @model dynamic
+
+<div class="row justify-content-center">
+    <div class="col-9 col-md-9 col-lg-6 mt-5">
+        @if (Model != null)
+        {
+            <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Authenticate" asp-action="SignUpRequest">
+                <div class="mb-3">
+                    <label for="fullname" class="form-label">Tên đầy đủ</label>
+                    <input type="text" class="form-control" id="fullname" name="FullName">
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Tên đăng nhập</label>
+                    <input type="text" class="form-control" id="username" name="Username">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" id="password" name="Password">
+                </div>
+                <div class="mb_3">
+                    <label for="department" class="form-label">Phòng ban</label>
+                    <select class="form-select mb-3" id="department" name="DepID">
+                        <option selected disabled>Hãy chọn một đơn vị</option>
+                        @if (Model.Departments.Count > 0)
+                        {
+                            foreach (var d in Model.Departments)
+                            {
+                                <option value="@d.DepID">@d.DepName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <p>Quyền đăng ký</p>
+                    <div class="row">
+                        @if (Model.CompRoles.Count > 0)
+                        {
+                            foreach (var role in Model.CompRoles)
+                            {
+                                <div class="col-4">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="CompRoleID" id="@("CompRole" + role.CompRoleID)" value="@role.CompRoleID">
+                                        <label class="form-check-label" for="@("CompRole" + role.CompRoleID)">@role.CompRoleName</label>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p>Phân quyền</p>
+                    <div class="row">
+                        @if (Model.SysRoles.Count > 0)
+                        {
+                            foreach (var role in Model.SysRoles)
+                            {
+                                <div class="col-4">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="SysRoleID" id="@("SysRole" + role.SysRoleID)" value="@role.SysRoleID">
+                                        <label class="form-check-label" for="@("SysRole" + role.SysRoleID)">@role.SysRoleName</label>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Đăng ký</button>
+            </form>
+        }
+
+        @if (ViewData["Error"] != null)
+        {
+            <p class="text-danger pt-2">@ViewData["Error"]</p>
+        }
+    </div>
+</div>

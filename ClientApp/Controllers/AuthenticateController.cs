@@ -35,19 +35,29 @@ public class AuthenticateController : Controller
             var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
             var compRoleGet = await RequestHandler.GetAsync("Role/GetAllCompanyRoles");
             var sysRoleGet = await RequestHandler.GetAsync("Role/GetAllSystemRoles");
-            if (depGet.IsSuccessStatusCode)
+            if (
+                depGet.IsSuccessStatusCode
+                && compRoleGet.IsSuccessStatusCode
+                && sysRoleGet.IsSuccessStatusCode
+            )
             {
                 var depModel = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
                 var compRoleModel = await compRoleGet.Content.ReadFromJsonAsync<
                     List<CompRoleModel>
                 >();
                 var sysRoleModel = await sysRoleGet.Content.ReadFromJsonAsync<List<SysRoleModel>>();
-                models.Departments = depModel;
+
                 if (depModel != null && compRoleModel != null && sysRoleModel != null)
                 {
+                    models.Departments = depModel;
+                    models.CompRoles = compRoleModel;
+                    models.SysRoles = sysRoleModel;
                     return View(models);
                 }
             }
+            ViewData["Error"] =
+                "Đang có lỗi xảy ra với kết nối tới máy chủ, xin hãy làm mới trang web hoặc quay lại lúc khác.";
+            return View();
         }
         return Redirect("/Home");
     }
@@ -84,21 +94,9 @@ public class AuthenticateController : Controller
                     FullName = collection["FullName"].ToString(),
                     Username = collection["Username"].ToString(),
                     Password = collection["Password"].ToString(),
-                    Dep = new()
-                    {
-                        DepID = Convert.ToInt32(collection["DepID"]),
-                        DepName = collection["DepName"].ToString(),
-                    },
-                    CompRole = new()
-                    {
-                        CompRoleID = Convert.ToInt32(collection["CompRoleID"]),
-                        CompRoleName = collection["CompRoleName"].ToString(),
-                    },
-                    SysRole = new()
-                    {
-                        SysRoleID = Convert.ToInt32(collection["SysRoleID"]),
-                        SysRoleName = collection["SysRoleName"].ToString(),
-                    },
+                    DepID = Convert.ToInt32(collection["DepID"]),
+                    CompRoleID = Convert.ToInt32(collection["CompRoleID"]),
+                    SysRoleID = Convert.ToInt32(collection["SysRoleID"]),
                 };
             return await ConfirmCredentials(request, "SignUp");
         }

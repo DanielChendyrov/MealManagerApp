@@ -6,10 +6,10 @@
         public string Username { get; set; }
         public string Password { get; set; }
         public int DepID { get; set; }
-        public virtual DepartmentDTO Dep { get; set; } = null!;
+        public virtual DepartmentDTO? Dep { get; set; }
         public int CompRoleID { get; set; }
-        public virtual CompanyRoleDTO CompRole { get; set; } = null!;
+        public virtual CompanyRoleDTO? CompRole { get; set; }
         public int SysRoleID { get; set; }
-        public virtual SystemRoleDTO SysRole { get; set; } = null!;
+        public virtual SystemRoleDTO? SysRole { get; set; }
     }
 }

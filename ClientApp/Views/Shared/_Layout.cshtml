@@ -18,7 +18,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-start">
                     <div class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
                     </div>
@@ -29,7 +29,7 @@
                             string? sysRole = Context.Session.GetString("SysRole");
                             if (sysRole != null && sysRole == "Admin")
                             {
-                                <div class="collapse navbar-collapse" id="adminDropdown">
+                                <div class="" id="adminDropdown">
                                     <ul class="navbar-nav">
                                         <li class="nav-item dropdown">
                                             <a class="nav-link dropdown-toggle" id="adminDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -51,7 +51,7 @@
                                 </div>
                             }
 
-                            <div class="collapse navbar-collapse" id="formDropdown">
+                            <div class="" id="formDropdown">
                                 <ul class="navbar-nav">
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" id="formDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -63,7 +63,7 @@
                                             </li>
                                             @{
                                                 string? compRole = Context.Session.GetString("CompRole");
-                                                if (compRole != null && compRole == "Department Rep")
+                                                if (compRole != null && compRole == "Tập thể")
                                                 {
                                                     <li>
                                                         <a class="dropdown-item" asp-area="" asp-controller="Form" asp-action="Department">Đăng ký suất tập thể</a>
