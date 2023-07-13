@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BusinessObject.DTO.Request;
+using BusinessObject.Manager.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers;
 
@@ -8,5 +11,118 @@ namespace API.Controllers;
 [Authorize]
 public class MealController : ControllerBase
 {
+    private IMealManager MealManager { get; }
 
+    public MealController(IMealManager userManager)
+    {
+        MealManager = userManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPersonalMonthlyStats(int uid)
+    {
+        try
+        {
+            var result = await MealManager.GetPersonalMonthlyStats(uid);
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost, Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetCompanyDailyStats(DateTime requestDate)
+    {
+        try
+        {
+            var result = await MealManager.GetCompanyDailyStats(requestDate);
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost, Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetCompanyMonthlyStats(DateTime requestDate)
+    {
+        try
+        {
+            var result = await MealManager.GetCompanyMonthlyStats(requestDate);
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet, Authorize(Roles = "Tập thể")]
+    public async Task<IActionResult> FindExistingRegistration(int depID)
+    {
+        try
+        {
+            var result = await MealManager.FindExistingRegistration(depID);
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> RegisterPersonalMeal(FormDTO request)
+    {
+        try
+        {
+            var result = await MealManager.RegisterPersonalMeal(request);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost, Authorize(Roles = "Tập thể")]
+    public async Task<IActionResult> RegisterDepartmentMeal(FormDTO request)
+    {
+        try
+        {
+            var result = await MealManager.RegisterDepartmentMeal(request);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }

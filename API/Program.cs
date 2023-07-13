@@ -66,7 +66,7 @@ builder.Services
     });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IUserManager, UserManager>();
+builder.Services.AddScoped<IMealManager, UserManager>();
 builder.Services.AddScoped<IDepartmentManager, DepartmentManager>();
 builder.Services.AddScoped<IRoleManager, RoleManager>();
 builder.Services.AddScoped<IMealManager, MealManager>();

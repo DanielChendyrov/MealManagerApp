@@ -19,19 +19,16 @@ public class DepartmentManager : IDepartmentManager
 
     public async Task<bool> CreateNewDep(List<DepartmentDTO> request)
     {
-        var response = await DepartmentDAO.CreateNewDep(Mapper.Map<List<Department>>(request));
-        return response;
+        return await DepartmentDAO.CreateNewDep(Mapper.Map<List<Department>>(request));
     }
 
     public async Task<bool> EditDep(List<DepartmentDTO> depList)
     {
-        var response = await DepartmentDAO.EditDep(Mapper.Map<List<Department>>(depList));
-        return response;
+        return await DepartmentDAO.EditDep(Mapper.Map<List<Department>>(depList));
     }
 
     public async Task<List<DepartmentDTO>> GetAllDeps()
     {
-        var response = await DepartmentDAO.GetAllDeps();
-        return Mapper.Map<List<DepartmentDTO>>(response);
+        return Mapper.Map<List<DepartmentDTO>>(await DepartmentDAO.GetAllDeps());
     }
 }

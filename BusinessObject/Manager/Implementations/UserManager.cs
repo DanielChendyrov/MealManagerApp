@@ -2,7 +2,6 @@
 using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
 using BusinessObject.Manager.Interfaces;
-using DataAccessLayer.DAO.Implementations;
 using DataAccessLayer.DAO.Interfaces;
 using DataAccessLayer.Domain;
 
@@ -21,35 +20,29 @@ public class UserManager : IUserManager
 
     public async Task<bool> EditUser(UserDTO request)
     {
-        var response = await UserDAO.EditUser(Mapper.Map<User>(request));
-        return response;
+        return await UserDAO.EditUser(Mapper.Map<User>(request));
     }
 
     public async Task<List<UserDTO>> GetAllUsers()
     {
-        var response = await UserDAO.GetAllUsers();
-        return Mapper.Map<List<UserDTO>>(response);
+        return Mapper.Map<List<UserDTO>>(await UserDAO.GetAllUsers());
     }
 
     public async Task<List<UserDTO>> GetUsersByDep(int depID)
     {
-        var response = await UserDAO.GetUsersByDep(depID);
-        return Mapper.Map<List<UserDTO>>(response);
+        return Mapper.Map<List<UserDTO>>(await UserDAO.GetUsersByDep(depID));
     }
 
     public async Task<UserDTO> LogIn(LogInDTO request)
     {
-        var response = await UserDAO.LogIn(Mapper.Map<User>(request));
-        return Mapper.Map<UserDTO>(response);
+        return Mapper.Map<UserDTO>(await UserDAO.LogIn(Mapper.Map<User>(request)));
     }
 
     public async Task<UserDTO> SignUp(SignUpDTO request)
     {
-        bool response = await UserDAO.SignUp(Mapper.Map<User>(request));
-        if (response)
+        if (await UserDAO.SignUp(Mapper.Map<User>(request)))
         {
-            LogInDTO forward = new() { Username = request.Username, Password = request.Password };
-            return await LogIn(forward);
+            return await LogIn(new() { Username = request.Username, Password = request.Password });
         }
         return new();
     }

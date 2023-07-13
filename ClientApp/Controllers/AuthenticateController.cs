@@ -129,7 +129,7 @@ public class AuthenticateController : Controller
                         content.Jwt,
                         new CookieOptions
                         {
-                            Expires = DateTime.Now.AddMinutes(180),
+                            Expires = DateTime.Now.AddMinutes(30),
                             HttpOnly = true,
                             Secure = true,
                             SameSite = SameSiteMode.Strict

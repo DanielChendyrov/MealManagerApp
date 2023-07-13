@@ -41,7 +41,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpGet, Authorize(Roles = "Admin, Department Rep")]
+    [HttpGet, Authorize(Roles = "Admin, Tập thể")]
     [Route("/{depID}")]
     public async Task<IActionResult> GetUsersByDep(int depID)
     {

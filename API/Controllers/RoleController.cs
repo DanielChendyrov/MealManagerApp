@@ -62,10 +62,7 @@ public class RoleController : ControllerBase
             {
                 return Ok(result);
             }
-            else
-            {
-                return BadRequest();
-            }
+            return BadRequest();
         }
         catch (Exception ex)
         {
@@ -83,10 +80,7 @@ public class RoleController : ControllerBase
             {
                 return Ok(result);
             }
-            else
-            {
-                return BadRequest();
-            }
+            return BadRequest();
         }
         catch (Exception ex)
         {

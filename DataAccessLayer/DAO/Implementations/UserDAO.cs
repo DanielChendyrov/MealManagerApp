@@ -19,9 +19,9 @@ public class UserDAO : IUserDAO
         string query =
             $@"select u.UserID, u.FullName, u.Username, u.[Password], d.*, cr.*, sr.*
                 from Users u 
-                join Departments d on d.DepID = u.DepID
-                join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
-                join SystemRoles sr on sr.SysRoleID = u.SysRoleID";
+            join Departments d on d.DepID = u.DepID
+            join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
+            join SystemRoles sr on sr.SysRoleID = u.SysRoleID";
         List<User> response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
         {
@@ -64,10 +64,10 @@ public class UserDAO : IUserDAO
         string query =
             $@"select u.UserID, u.FullName, u.Username, u.[Password], d.*, cr.*, sr.*
                 from Users u 
-                join Departments d on d.DepID = u.DepID
-                join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
-                join SystemRoles sr on sr.SysRoleID = u.SysRoleID
-                where d.DepID = {depId}";
+            join Departments d on d.DepID = u.DepID
+            join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
+            join SystemRoles sr on sr.SysRoleID = u.SysRoleID
+            where d.DepID = {depId}";
         List<User> response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
         {
@@ -109,7 +109,7 @@ public class UserDAO : IUserDAO
     {
         string query =
             $@"select u.UserID, u.FullName, u.Username, u.[Password], d.*, cr.*, sr.*
-            from Users u 
+                from Users u 
             join Departments d on d.DepID = u.DepID
             join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
             join SystemRoles sr on sr.SysRoleID = u.SysRoleID
@@ -152,12 +152,15 @@ public class UserDAO : IUserDAO
     public async Task<bool> SignUp(User request)
     {
         string query =
-            $@"select * from Users where Username = '{request.Username}'
-                if @@rowcount = 0
+            $@"if exists (
+                select * from Users where Username = '{request.Username}'
+            )
+                begin
 	                insert into Users values
                         ('{request.FullName}', '{request.Username}', 
                         '{request.Password}', {request.DepId},
-                        {request.CompRoleId}, {request.SysRoleId})";
+                        {request.CompRoleId}, {request.SysRoleId})
+                end";
         return await _dbContext.ExecuteNonQueryAsync(query);
     }
 
@@ -167,7 +170,7 @@ public class UserDAO : IUserDAO
             $@"update Users
                 set FullName = '{request.FullName}', DepID = {request.DepId},
                     CompRoleID = {request.CompRoleId}, SysRoleID = {request.SysRoleId}
-                where UserID = {request.UserId}";
+            where UserID = {request.UserId}";
         return await _dbContext.ExecuteNonQueryAsync(query);
     }
 }

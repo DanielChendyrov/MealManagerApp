@@ -2,5 +2,37 @@
     ViewData["Title"] = "Personal";
 }
 
-<h1>Personal</h1>
+@model dynamic
 
+@{
+    int? uid = Context.Session.GetInt32("UserID");
+    string? fullName = Context.Session.GetString("FullName");
+    int? depID = Context.Session.GetInt32("DepID");
+    string? depName = Context.Session.GetString("DepName");
+
+    <div class="row justify-content-center">
+        <div class="col-9 col-md-9 col-lg-6 mt-5">
+            @if (Model != null)
+            {
+                <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="PersonalSubmit">
+                    <p class="h4">Đăng ký ăn cá nhân</p>
+                    <br />
+                    <div class="form-group">
+                        <label for="user" class="form-label">Họ tên: @fullName</label>
+                        <input type="hidden" class="form-control" id="user" name="UserID" value="@uid">
+                    </div>
+                    <div class="form-group">
+                        <label for="department" class="form-label">Phòng ban: @depName</label>
+                        <input type="hidden" class="form-control" id="department" name="DepID" value="@depID">
+                    </div>
+                    
+                </form>
+            }
+
+            @if (ViewData["Error"] != null)
+            {
+                <p class="text-danger pt-2">@ViewData["Error"]</p>
+            }
+        </div>
+    </div>
+}

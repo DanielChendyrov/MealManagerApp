@@ -23,13 +23,11 @@ public class RoleManager : IRoleManager
         {
             if (request.GetType() == typeof(CompanyRoleDTO))
             {
-                var response = await RoleDAO.AddRole(Mapper.Map<CompanyRole>(request));
-                return response;
+                return await RoleDAO.AddRole(Mapper.Map<CompanyRole>(request));
             }
             else if (request.GetType() == typeof(SystemRoleDTO))
             {
-                var response = await RoleDAO.AddRole(Mapper.Map<SystemRole>(request));
-                return response;
+                return await RoleDAO.AddRole(Mapper.Map<SystemRole>(request));
             }
         }
         return false;
@@ -41,13 +39,11 @@ public class RoleManager : IRoleManager
         {
             if (request.GetType() == typeof(CompanyRoleDTO))
             {
-                var response = await RoleDAO.EditRole(Mapper.Map<CompanyRole>(request));
-                return response;
+                return await RoleDAO.EditRole(Mapper.Map<CompanyRole>(request));
             }
             else if (request.GetType() == typeof(SystemRoleDTO))
             {
-                var response = await RoleDAO.EditRole(Mapper.Map<SystemRole>(request));
-                return response;
+                return await RoleDAO.EditRole(Mapper.Map<SystemRole>(request));
             }
         }
         return false;
@@ -55,13 +51,11 @@ public class RoleManager : IRoleManager
 
     public async Task<List<CompanyRoleDTO>> GetAllCompanyRoles()
     {
-        var response = await RoleDAO.GetAllCompanyRoles();
-        return Mapper.Map<List<CompanyRoleDTO>>(response);
+        return Mapper.Map<List<CompanyRoleDTO>>(await RoleDAO.GetAllCompanyRoles());
     }
 
     public async Task<List<SystemRoleDTO>> GetAllSystemRoles()
     {
-        var response = await RoleDAO.GetAllSystemRoles();
-        return Mapper.Map<List<SystemRoleDTO>>(response);
+        return Mapper.Map<List<SystemRoleDTO>>(await RoleDAO.GetAllSystemRoles());
     }
 }

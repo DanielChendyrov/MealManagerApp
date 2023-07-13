@@ -13,4 +13,9 @@ public class FormController : Controller
     {
         return View();
     }
+
+    public IActionResult PersonalSubmit()
+    {
+        return RedirectToAction("Personal");
+    }
 }
