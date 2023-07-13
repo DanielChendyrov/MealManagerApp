@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
 using BusinessObject.DTO.Response;
 using BusinessObject.Manager.Interfaces;
@@ -17,6 +18,11 @@ public class MealManager : IMealManager
     {
         MealDAO = mealDAO;
         Mapper = mapper;
+    }
+
+    public async Task<List<MealDTO>> GettAllMeals()
+    {
+        return Mapper.Map<List<MealDTO>>(await MealDAO.GetAllMeals());
     }
 
     public async Task<List<ServingDTO>> GetPersonalMonthlyStats(int uid)
@@ -70,13 +76,21 @@ public class MealManager : IMealManager
     {
         if (!request.Servings.IsNullOrEmpty())
         {
-            request.Servings = request.Servings.Where(s => s.UserID == request.UserID).ToList();
+            request.Servings = request.Servings
+                .Where(s => s.UserID == request.UserID && s.BookedDate >= System.DateTime.Now)
+                .ToList();
         }
         return await MealDAO.RegisterMeal(Mapper.Map<Form>(request));
     }
 
     public async Task<bool> RegisterDepartmentMeal(FormDTO request)
     {
+        if (!request.Servings.IsNullOrEmpty())
+        {
+            request.Servings = request.Servings
+                .Where(s => s.BookedDate >= System.DateTime.Now)
+                .ToList();
+        }
         return await MealDAO.RegisterMeal(Mapper.Map<Form>(request));
     }
 }

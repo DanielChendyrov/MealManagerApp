@@ -25,7 +25,32 @@
                         <label for="department" class="form-label">Phòng ban: @depName</label>
                         <input type="hidden" class="form-control" id="department" name="DepID" value="@depID">
                     </div>
-                    
+                    @if (Model.Meals.Count > 0)
+                    {
+                        <div class="row mb-5">
+                            <label for="bookedDate" class="col-form-label col-md-4 col-lg-3 col-xxl-2">Ngày đặt lịch</label>
+                            <div class="col-md-8 col-lg-9 col-xxl-10">
+                                <input type="date" class="form-control" id="bookedDate" name="BookedDate" value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+                        @foreach (var m in Model.Meals)
+                        {
+                            <div class="row mb-3">
+                                <div class="form-check col-sm-2 col-md-4 col-lg-3 col-xxl-2">
+                                    <input type="checkbox" class="form-check-input" id="@m.MealID" name="toggleCheck">
+                                    <label for="@m.MealID" class="form-check-label">@m.MealName</label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" id="@("Quantity" + m.MealID)" name="Quantity" disabled>
+                                    <input type="hidden" class="form-control" id="@("MealID" + m.MealID)" name="MealID" value="@m.MealID" disabled>
+                                    <input type="hidden" class="form-control" id="@("MealTime" + m.MealID)" name="MealTime" value="@m.Time">
+                                </div>
+                            </div>
+                        }
+                        <div class="justify-content-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    }
                 </form>
             }
 
@@ -35,4 +60,73 @@
             }
         </div>
     </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        document.addEventListener("change", function (event) {
+            if (event.target.name === "toggleCheck") {
+                var check = event.target;
+                var quantity = document.querySelector("[id = 'Quantity" + event.target.id + "']");
+                var mealInput = document.querySelector("[id = 'MealID" + event.target.id + "']");
+
+                if (check.checked) {
+                    quantity.disabled = false;
+                    quantity.value = 1;
+                    mealInput.disabled = false;
+                } else {
+                    quantity.value = "";
+                    quantity.disabled = true;
+                    mealInput.disabled = true;
+                }
+            }
+
+            if (event.target.name === "Quantity") {
+                event.target.value = event.target.value.replace(/\s/g, '');
+
+                if (event.target.value === "") {
+                    event.target.value = 1;
+                    alert("Ô số lượng không thể để trống.");
+                }
+                if (!event.target.value.match(/^([1-9][0-9]{0,1})$/)) {
+                    event.target.value = 1;
+                    alert("Xin hãy điền một số từ 1 đến 99, hoặc để giá trị mặc định.");
+                }
+            }
+
+            if (event.target.name === "BookedDate") {
+                var currentDate = new Date(new Date().toDateString());
+                var inputDate = new Date(new Date(event.target.value).toDateString());
+                if (Date.parse(inputDate) < Date.parse(currentDate)) {
+                    event.target.value = currentDate.toISOString().slice(0, 10);
+                    checkTime();
+                    alert("Không thể đăng ký cho quá khứ.")
+                } else if (Date.parse(inputDate) == Date.parse(currentDate)) {
+                    checkTime();
+                } else {
+                    for (var mc of document.getElementsByName("toggleCheck")) {
+                        mc.disabled = false;
+                    }
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            checkTime();
+        });
+
+        function checkTime() {
+            var currentDate = new Date();
+            console.log(currentDate);
+            for (var mc of document.getElementsByName("toggleCheck")) {
+                var timeString = document.getElementById("MealTime" + mc.id).value;
+                if (currentDate.getHours() > timeString.slice(0, 2)) {
+                    mc.checked = false;
+                    mc.disabled = true;
+                } else {
+                    mc.disabled = false;
+                }
+            }
+        }
+    </script>
 }

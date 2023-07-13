@@ -152,7 +152,7 @@ public class UserDAO : IUserDAO
     public async Task<bool> SignUp(User request)
     {
         string query =
-            $@"if exists (
+            $@"if not exists (
                 select * from Users where Username = '{request.Username}'
             )
                 begin

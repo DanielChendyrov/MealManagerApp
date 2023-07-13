@@ -9,4 +9,5 @@ public interface IMealDAO
     Task<List<Serving>> GetCompanyMonthlyStats(DateTime requestDate);
     Task<List<Serving>> FindExistingRegistration(int depID);
     Task<bool> RegisterMeal(Form request);
+    Task<List<Meal>> GetAllMeals();
 }

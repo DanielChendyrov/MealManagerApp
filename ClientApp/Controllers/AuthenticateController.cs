@@ -29,37 +29,31 @@ public class AuthenticateController : Controller
     public async Task<IActionResult> SignUp()
     {
         int? uid = HttpContext.Session.GetInt32("UserID");
-        if (uid == null || uid <= 0)
+        if (uid != null && uid > 0)
         {
-            dynamic models = new ExpandoObject();
-            var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
-            var compRoleGet = await RequestHandler.GetAsync("Role/GetAllCompanyRoles");
-            var sysRoleGet = await RequestHandler.GetAsync("Role/GetAllSystemRoles");
-            if (
-                depGet.IsSuccessStatusCode
-                && compRoleGet.IsSuccessStatusCode
-                && sysRoleGet.IsSuccessStatusCode
-            )
-            {
-                var depModel = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-                var compRoleModel = await compRoleGet.Content.ReadFromJsonAsync<
-                    List<CompRoleModel>
-                >();
-                var sysRoleModel = await sysRoleGet.Content.ReadFromJsonAsync<List<SysRoleModel>>();
-
-                if (depModel != null && compRoleModel != null && sysRoleModel != null)
-                {
-                    models.Departments = depModel;
-                    models.CompRoles = compRoleModel;
-                    models.SysRoles = sysRoleModel;
-                    return View(models);
-                }
-            }
-            ViewData["Error"] =
-                "Đang có lỗi xảy ra với kết nối tới máy chủ, xin hãy làm mới trang web hoặc quay lại lúc khác.";
-            return View();
+            return Redirect("/Home");
         }
-        return Redirect("/Home");
+        dynamic models = new ExpandoObject();
+        var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
+        var compRoleGet = await RequestHandler.GetAsync("Role/GetAllCompanyRoles");
+        var sysRoleGet = await RequestHandler.GetAsync("Role/GetAllSystemRoles");
+        if (
+            depGet.IsSuccessStatusCode
+            && compRoleGet.IsSuccessStatusCode
+            && sysRoleGet.IsSuccessStatusCode
+        )
+        {
+            models.Departments = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+            models.CompRoles = await compRoleGet.Content.ReadFromJsonAsync<List<CompRoleModel>>();
+            models.SysRoles = await sysRoleGet.Content.ReadFromJsonAsync<List<SysRoleModel>>();
+            if (models.Departments != null && models.CompRoles != null && models.SysRoles != null)
+            {
+                return View(models);
+            }
+        }
+        ViewData["Error"] =
+            "Đang có lỗi xảy ra với kết nối tới máy chủ, xin hãy làm mới trang web hoặc quay lại lúc khác.";
+        return View();
     }
 
     public async Task<IActionResult> LogInRequest(LogInModel request)

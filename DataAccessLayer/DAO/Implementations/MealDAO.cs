@@ -15,6 +15,25 @@ public class MealDAO : IMealDAO
         _dbContext = new();
     }
 
+    public async Task<List<Meal>> GetAllMeals()
+    {
+        string query = $@"select * from Meals";
+        List<Meal> response = new();
+        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        {
+            while (reader.Read())
+            {
+                response.Add(new Meal
+                {
+                    MealId = Convert.ToInt32(reader["MealID"]),
+                    MealName = reader["MealName"].ToString()!,
+                    Time = (TimeSpan)reader["Time"],
+                });
+            }
+        }
+        return response;
+    }
+
     public async Task<List<Serving>> GetPersonalMonthlyStats(int uid)
     {
         string query =
@@ -190,7 +209,7 @@ public class MealDAO : IMealDAO
             foreach (var s in request.Servings)
             {
                 query += 
-                    $@"if exists (
+                    $@"if not exists (
                         select * from Servings
 	                    where MealID = {s.MealId} and UserID = {s.UserId} and BookedDate = {s.BookedDate}
                     )

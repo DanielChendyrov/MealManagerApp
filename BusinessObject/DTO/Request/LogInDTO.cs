@@ -1,8 +1,7 @@
-﻿namespace BusinessObject.DTO.Request
+﻿namespace BusinessObject.DTO.Request;
+
+public class LogInDTO
 {
-    public class LogInDTO
-    {
-        public string? Username { get; set; }
-        public string? Password { get; set; }
-    }
+    public string? Username { get; set; }
+    public string? Password { get; set; }
 }

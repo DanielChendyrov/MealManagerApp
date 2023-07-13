@@ -14,7 +14,6 @@ public class MealProfile : Profile
             .ForMember(des => des.User, opt => opt.MapFrom(src => src.User))
             .ForMember(des => des.DepId, opt => opt.MapFrom(src => src.DepID))
             .ForMember(des => des.Dep, opt => opt.MapFrom(src => src.Dep))
-            .ForMember(des => des.RegisteredDate, opt => opt.MapFrom(src => src.RegisteredDate))
             .ForMember(des => des.Servings, opt => opt.MapFrom(src => src.Servings));
 
         CreateMap<ServingDTO, Serving>()

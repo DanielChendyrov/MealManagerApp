@@ -19,6 +19,24 @@ public class MealController : ControllerBase
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetAllMeals()
+    {
+        try
+        {
+            var result = await MealManager.GettAllMeals();
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetPersonalMonthlyStats(int uid)
     {
         try
@@ -72,7 +90,8 @@ public class MealController : ControllerBase
         }
     }
 
-    [HttpGet, Authorize(Roles = "Tập thể")]
+    [HttpGet]
+    [Route("{depID}")]
     public async Task<IActionResult> FindExistingRegistration(int depID)
     {
         try
@@ -80,7 +99,7 @@ public class MealController : ControllerBase
             var result = await MealManager.FindExistingRegistration(depID);
             if (result.IsNullOrEmpty())
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(result);
         }
