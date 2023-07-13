@@ -36,7 +36,9 @@ public class FormController : Controller
             models.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
             if (servingGet.ReasonPhrase != "No Content")
             {
-                models.Servings = (await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>())!.Where(s => s.UserID == uid);
+                models.Servings = (
+                    await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>()
+                )!.Where(s => s.UserID == uid);
             }
             return View(models);
         }
@@ -50,8 +52,53 @@ public class FormController : Controller
         return View();
     }
 
-    public IActionResult PersonalSubmit()
+    public async Task<IActionResult> PersonalSubmit(IFormCollection collection)
     {
-        return RedirectToAction("Personal");
+        try
+        {
+            int? uid = HttpContext.Session.GetInt32("UserID");
+            if (uid == null || uid <= 0)
+            {
+                return Redirect("/Home");
+            }
+
+            if (collection["MealID"].Count > 0)
+            {
+                FormModel request =
+                    new()
+                    {
+                        UserID = Convert.ToInt32(uid),
+                        DepID = Convert.ToInt32(HttpContext.Session.GetInt32("DepID")),
+                    };
+                var mealID = collection["MealID"].ToList();
+                var quantity = collection["Quantity"].ToList();
+                var mealTime = collection["MealTime"].ToList();
+                for (int i = 0; i < mealID.Count; i++)
+                {
+                    request.Servings.Add(
+                        new ServingModel
+                        {
+                            Quantity = Convert.ToInt32(quantity[i]),
+                            BookedDate = Convert
+                                .ToDateTime(collection["BookedDate"])
+                                .Add(TimeSpan.Parse(mealTime[i])),
+                            MealID = Convert.ToInt32(mealID[i]),
+                            UserID = Convert.ToInt32(uid),
+                        }
+                    );
+                }
+
+                var response = await RequestHandler.PostAsync(
+                    "Meal/RegisterPersonalMeal",
+                    request,
+                    Request.Cookies["jwt"]!
+                );
+            }
+            return RedirectToAction("Personal");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }

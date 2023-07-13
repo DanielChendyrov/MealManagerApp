@@ -37,8 +37,9 @@ public class MealManager : IMealManager
 
     public async Task<List<CompanyMonthlyStatsDTO>> GetCompanyMonthlyStats(DateTime requestDate)
     {
-        var response = await MealDAO.GetCompanyMonthlyStats(requestDate);
-        var dtoList = Mapper.Map<List<ServingDTO>>(response);
+        var dtoList = Mapper.Map<List<ServingDTO>>(
+            await MealDAO.GetCompanyMonthlyStats(requestDate)
+        );
         var userList = dtoList.Select(s => s.User).Distinct().ToList();
         var mealList = dtoList.Select(s => s.Meal).Distinct().ToList();
         List<CompanyMonthlyStatsDTO> result = new();
@@ -74,23 +75,23 @@ public class MealManager : IMealManager
 
     public async Task<bool> RegisterPersonalMeal(FormDTO request)
     {
+        request.Servings = request.Servings
+            .Where(s => s.UserID == request.UserID && s.BookedDate >= DateTime.Now)
+            .ToList();
         if (!request.Servings.IsNullOrEmpty())
         {
-            request.Servings = request.Servings
-                .Where(s => s.UserID == request.UserID && s.BookedDate >= System.DateTime.Now)
-                .ToList();
+            return await MealDAO.RegisterMeal(Mapper.Map<Form>(request));
         }
-        return await MealDAO.RegisterMeal(Mapper.Map<Form>(request));
+        return false;
     }
 
     public async Task<bool> RegisterDepartmentMeal(FormDTO request)
     {
+        request.Servings = request.Servings.Where(s => s.BookedDate >= DateTime.Now).ToList();
         if (!request.Servings.IsNullOrEmpty())
         {
-            request.Servings = request.Servings
-                .Where(s => s.BookedDate >= System.DateTime.Now)
-                .ToList();
+            return await MealDAO.RegisterMeal(Mapper.Map<Form>(request));
         }
-        return await MealDAO.RegisterMeal(Mapper.Map<Form>(request));
+        return false;
     }
 }
