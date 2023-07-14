@@ -1,7 +1,201 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Department";
 }
 
-<h1>Department</h1>
+@model dynamic
 
+@{
+    int? uid = Context.Session.GetInt32("UserID");
+    string? fullName = Context.Session.GetString("FullName");
+    int? depID = Context.Session.GetInt32("DepID");
+    string? depName = Context.Session.GetString("DepName");
+
+    <div class="row justify-content-center">
+        <div class="col-9 col-md-9 col-lg-6 mt-5">
+            @if (Model != null)
+            {
+                <p class="h4">Đăng ký ăn tập thể</p>
+                <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="DepartmentSubmit">
+                    <br />
+                    <div class="form-group">
+                        <label for="user" class="form-label">Họ tên: @fullName</label>
+                        <input type="hidden" class="form-control" id="user" name="UserID" value="@uid">
+                    </div>
+                    <div class="form-group">
+                        <label for="department" class="form-label">Phòng ban: @depName</label>
+                        <input type="hidden" class="form-control" id="department" name="DepID" value="@depID">
+                    </div>
+                    @if (Model.Users.Count > 0 && Model.Meals.Count > 0)
+                    {
+                        <div class="row mb-5">
+                            <label for="bookedDate" class="col-form-label col-md-4 col-lg-3 col-xxl-2">Ngày đặt lịch</label>
+                            <div class="col-md-8 col-lg-9 col-xxl-10">
+                                <input type="date" class="form-control" id="bookedDate" name="BookedDate" value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Họ tên</th>
+                                    @foreach (var m in Model.Meals)
+                                    {
+                                        <th>@m.MealName</th>
+                                    }
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @foreach (var u in Model.Users)
+                                {
+                                    <tr>
+                                        <td>@u.FullName</td>
+                                        @foreach (var m in Model.Meals)
+                                        {
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="@("Check" + m.MealID + "User" + u.UserID)" name="toggleCheck">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" id="@("Quantity" + m.MealID + "User" + u.UserID)" name="Quantity" disabled>
+                                                        <input type="hidden" class="form-control" id="@("MealID" + m.MealID + "User" + u.UserID)" name="MealID" value="@m.MealID" disabled>
+                                                        <input type="hidden" class="form-control" id="@("MealTime" + m.MealID + "User" + u.UserID)" name="MealTime" value="@m.Time">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    }
+                </form>
+            }
+        </div>
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        document.addEventListener("change", function (event) {
+            if (event.target.name === "toggleCheck") {
+                var check = event.target;
+                var quantityInput = document.getElementById(
+                    "Quantity"
+                    + check.id.substring(
+                        check.id.indexOf("k") + 1,
+                        check.id.indexOf("U")
+                    )
+                    + "User" + check.id.substring(
+                        check.id.indexOf("r") + 1
+                    )
+                );
+                var mealInput = document.getElementById(
+                    "MealID"
+                    + check.id.substring(
+                        check.id.indexOf("k") + 1,
+                        check.id.indexOf("U")
+                    )
+                    + "User" + check.id.substring(
+                        check.id.indexOf("r") + 1
+                    )
+                );
+
+                if (check.checked) {
+                    quantityInput.disabled = false;
+                    quantityInput.value = 1;
+                    mealInput.disabled = false;
+                } else {
+                    quantityInput.value = "";
+                    quantityInput.disabled = true;
+                    mealInput.disabled = true;
+                }
+            }
+
+            if (event.target.name === "Quantity") {
+                var quantityInput = event.target;
+                quantityInput.value = quantityInput.value.replace(/\s/g, '');
+
+                if (quantityInput.value === "") {
+                    quantityInput.value = 1;
+                    alert("Ô số lượng không thể để trống.");
+                }
+                if (!quantityInput.value.match(/^([1-9][0-9]{0,1})$/)) {
+                    quantityInput.value = 1;
+                    alert("Xin hãy điền một số từ 1 đến 99, hoặc để giá trị mặc định.");
+                }
+            }
+
+            if (event.target.name === "BookedDate") {
+                var dateInput = event.target;
+                var currentDate = new Date(new Date().toDateString());
+                var inputDate = new Date(new Date(event.target.value).toDateString());
+                if (Date.parse(inputDate) < Date.parse(currentDate)) {
+                    dateInput.value = currentDate.toISOString().slice(0, 10);
+                    checkTime();
+                    alert("Không thể đăng ký cho quá khứ.")
+                } else if (Date.parse(inputDate) == Date.parse(currentDate)) {
+                    checkTime();
+                } else {
+                    for (var mc of document.getElementsByName("toggleCheck")) {
+                        mc.disabled = false;
+                    }
+                }
+
+                var existing = [];
+                @if (Model != null)
+                {
+                    if (Model.Servings.Count > 0)
+                    {
+                        foreach (var s in Model.Servings)
+                        {
+                            <text>
+                                existing.push(@s);
+                                if (existing.length > 0) {
+                                    for (var s of existing) {
+                                        if (Date.parse(s.BookedDate) == Date.parse(inputDate)) {
+                                            document.getElementById(
+                                                "Check" + @s.MealID + "User" + @s.UserID
+                                            ).checked = true;
+                                            document.getElementById(
+                                                "Quantity" + @s.MealID + "User" + @s.UserID
+                                            ).value = @s.Quantity;
+                                        }
+                                    }
+                                }
+                            </text>
+                        }
+                    }
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            checkTime();
+        });
+
+        function checkTime() {
+            var currentDate = new Date();
+            console.log(currentDate);
+            for (var mc of document.getElementsByName("toggleCheck")) {
+                var timeString = document.getElementById("MealTime"
+                    + mc.id.substring(
+                        mc.id.indexOf("k") + 1,
+                        mc.id.indexOf("U")
+                    )
+                    + "User" + mc.id.substring(
+                        mc.id.indexOf("r") + 1
+                    )).value;
+                if (currentDate.getHours() + 1 > timeString.slice(0, 2)) {
+                    mc.checked = false;
+                    mc.disabled = true;
+                } else {
+                    mc.disabled = false;
+                }
+            }
+        }
+    </script>
+}

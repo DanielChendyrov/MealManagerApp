@@ -34,6 +34,7 @@ public class FormController : Controller
         if (mealGet.IsSuccessStatusCode && servingGet.IsSuccessStatusCode)
         {
             models.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            models.Servings = new List<ServingModel>();
             if (servingGet.ReasonPhrase != "No Content")
             {
                 models.Servings = (
@@ -47,8 +48,45 @@ public class FormController : Controller
         return View();
     }
 
-    public IActionResult Department()
+    public async Task<IActionResult> Department()
     {
+        int? uid = HttpContext.Session.GetInt32("UserID");
+        if (uid == null || uid <= 0)
+        {
+            return Redirect("/Home");
+        }
+
+        dynamic models = new ExpandoObject();
+        var mealGet = await RequestHandler.GetAsync("Meal/GetAllMeals", Request.Cookies["jwt"]!);
+        int? depID = HttpContext.Session.GetInt32("DepID");
+        var servingGet = await RequestHandler.GetAsync(
+            "Meal/FindExistingRegistration/" + depID,
+            Request.Cookies["jwt"]!
+        );
+        var userGet = await RequestHandler.GetAsync(
+            "User/GetUsersByDep/" + depID,
+            Request.Cookies["jwt"]!
+        );
+
+        if (
+            mealGet.IsSuccessStatusCode
+            && servingGet.IsSuccessStatusCode
+            && userGet.IsSuccessStatusCode
+        )
+        {
+            models.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            models.Servings = new List<ServingModel>();
+            if (servingGet.ReasonPhrase != "No Content")
+            {
+                models.Servings = (
+                    await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>()
+                )!.Where(s => s.UserID == uid);
+            }
+            models.Users = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
+            return View(models);
+        }
+        ViewData["Error"] =
+            "Đang có lỗi xảy ra với kết nối tới máy chủ, xin hãy làm mới trang web hoặc quay lại lúc khác.";
         return View();
     }
 
@@ -95,6 +133,23 @@ public class FormController : Controller
                 );
             }
             return RedirectToAction("Personal");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<IActionResult> DepartmentSubmit(IFormCollection collection)
+    {
+        try
+        {
+            int? uid = HttpContext.Session.GetInt32("UserID");
+            if (uid == null || uid <= 0)
+            {
+                return Redirect("/Home");
+            }
+            return RedirectToAction("Department");
         }
         catch (Exception ex)
         {

@@ -14,8 +14,8 @@
         <div class="col-9 col-md-9 col-lg-6 mt-5">
             @if (Model != null)
             {
+                <p class="h4">Đăng ký ăn cá nhân</p>
                 <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="PersonalSubmit">
-                    <p class="h4">Đăng ký ăn cá nhân</p>
                     <br />
                     <div class="form-group">
                         <label for="user" class="form-label">Họ tên: @fullName</label>
@@ -47,9 +47,8 @@
                                 </div>
                             </div>
                         }
-                        <div class="justify-content-center">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     }
                 </form>
             }
@@ -67,8 +66,8 @@
         document.addEventListener("change", function (event) {
             if (event.target.name === "toggleCheck") {
                 var check = event.target;
-                var quantity = document.querySelector("[id = 'Quantity" + event.target.id + "']");
-                var mealInput = document.querySelector("[id = 'MealID" + event.target.id + "']");
+                var quantity = document.getElementById("Quantity" + event.target.id);
+                var mealInput = document.getElementById("MealID" + event.target.id);
 
                 if (check.checked) {
                     quantity.disabled = false;
@@ -106,6 +105,26 @@
                 } else {
                     for (var mc of document.getElementsByName("toggleCheck")) {
                         mc.disabled = false;
+                    }
+                }
+
+                var existing = [];
+                @if (Model != null)
+                {
+                    if (Model.Servings.Count > 0)
+                    {
+                        foreach (var s in Model.Servings)
+                        {
+                            <text>existing.push(@s); </text>
+                        }
+                    }
+                }
+                if (existing.length > 0) {
+                    for (var s of existing) {
+                        if (Date.parse(s.BookedDate) == Date.parse(inputDate)) {
+                            document.getElementById(s.MealID).checked = true;
+                            document.getElementById("Quantity" + s.MealID).value = s.Quantity;
+                        }
                     }
                 }
             }
