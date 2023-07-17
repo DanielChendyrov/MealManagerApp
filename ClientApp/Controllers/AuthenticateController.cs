@@ -113,22 +113,12 @@ public class AuthenticateController : Controller
                 if (content != null)
                 {
                     HttpContext.Session.SetInt32("UserID", content.UserID);
-                    HttpContext.Session.SetString("FullName", content.FullName);
-                    HttpContext.Session.SetInt32("DepID", content.Dep.DepID);
-                    HttpContext.Session.SetString("DepName", content.Dep.DepName);
-                    HttpContext.Session.SetString("CompRole", content.CompRole.CompRoleName);
-                    HttpContext.Session.SetString("SysRole", content.SysRole.SysRoleName);
-                    Response.Cookies.Append(
-                        "Jwt",
-                        content.Jwt,
-                        new CookieOptions
-                        {
-                            Expires = DateTime.Now.AddMinutes(30),
-                            HttpOnly = true,
-                            Secure = true,
-                            SameSite = SameSiteMode.Strict
-                        }
-                    );
+                    HttpContext.Session.SetString("FullName", content.FullName!);
+                    HttpContext.Session.SetInt32("DepID", content.Dep!.DepID);
+                    HttpContext.Session.SetString("DepName", content.Dep.DepName!);
+                    HttpContext.Session.SetString("CompRole", content.CompRole!.CompRoleName!);
+                    HttpContext.Session.SetString("SysRole", content.SysRole!.SysRoleName!);
+                    HttpContext.Session.SetString("Jwt", content.Jwt!);
                     return Redirect("/Home");
                 }
                 return RedirectToAction(path);

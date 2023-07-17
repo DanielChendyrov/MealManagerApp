@@ -24,11 +24,14 @@ public class FormController : Controller
         }
 
         dynamic models = new ExpandoObject();
-        var mealGet = await RequestHandler.GetAsync("Meal/GetAllMeals", Request.Cookies["jwt"]!);
+        var mealGet = await RequestHandler.GetAsync(
+            "Meal/GetAllMeals",
+            HttpContext.Session.GetString("Jwt")!
+        );
         int? depID = HttpContext.Session.GetInt32("DepID");
         var servingGet = await RequestHandler.GetAsync(
             "Meal/FindExistingRegistration/" + depID,
-            Request.Cookies["jwt"]!
+            HttpContext.Session.GetString("Jwt")!
         );
 
         if (mealGet.IsSuccessStatusCode && servingGet.IsSuccessStatusCode)
@@ -43,7 +46,7 @@ public class FormController : Controller
                     .Where(s => s.UserID == uid)
                     .ToList();
             }
-            models.ServerDate = DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            models.ServerDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             return View(models);
         }
         ViewData["Error"] =
@@ -60,15 +63,18 @@ public class FormController : Controller
         }
 
         dynamic models = new ExpandoObject();
-        var mealGet = await RequestHandler.GetAsync("Meal/GetAllMeals", Request.Cookies["jwt"]!);
+        var mealGet = await RequestHandler.GetAsync(
+            "Meal/GetAllMeals",
+            HttpContext.Session.GetString("Jwt")!
+        );
         int? depID = HttpContext.Session.GetInt32("DepID");
         var servingGet = await RequestHandler.GetAsync(
             "Meal/FindExistingRegistration/" + depID,
-            Request.Cookies["jwt"]!
+            HttpContext.Session.GetString("Jwt")!
         );
         var userGet = await RequestHandler.GetAsync(
             "User/GetUsersByDep/" + depID,
-            Request.Cookies["jwt"]!
+            HttpContext.Session.GetString("Jwt")!
         );
 
         if (
@@ -88,7 +94,7 @@ public class FormController : Controller
                     .ToList();
             }
             models.Users = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
-            models.ServerDate = DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            models.ServerDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             return View(models);
         }
         ViewData["Error"] =
@@ -135,7 +141,7 @@ public class FormController : Controller
                 var response = await RequestHandler.PostAsync(
                     "Meal/RegisterPersonalMeal",
                     request,
-                    Request.Cookies["jwt"]!
+                    HttpContext.Session.GetString("Jwt")!
                 );
             }
             return RedirectToAction("Personal");
@@ -194,7 +200,7 @@ public class FormController : Controller
                     var response = await RequestHandler.PostAsync(
                         "Meal/RegisterPersonalMeal",
                         request,
-                        Request.Cookies["jwt"]!
+                        HttpContext.Session.GetString("Jwt")!
                     );
                 }
             }
