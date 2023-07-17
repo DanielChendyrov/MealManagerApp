@@ -23,12 +23,14 @@ public class MealDAO : IMealDAO
         {
             while (reader.Read())
             {
-                response.Add(new Meal
-                {
-                    MealId = Convert.ToInt32(reader["MealID"]),
-                    MealName = reader["MealName"].ToString()!,
-                    Time = (TimeSpan)reader["Time"],
-                });
+                response.Add(
+                    new Meal
+                    {
+                        MealId = Convert.ToInt32(reader["MealID"]),
+                        MealName = reader["MealName"].ToString()!,
+                        Time = (TimeSpan)reader["Time"],
+                    }
+                );
             }
         }
         return response;
@@ -162,35 +164,39 @@ public class MealDAO : IMealDAO
 
     public async Task<List<Serving>> FindExistingRegistration(int depID)
     {
-        string query = 
-            $@"select s.ServingID, s.Quantity, s.BookedDate, m.*, u.UserID, u.DepID
+        string query =
+            $@"select s.ServingID, s.Quantity, s.BookedDate, m.*, u.UserID, u.FullName, u.DepID
 	            from Servings s
             join Users u on u.UserID = s.UserID
             join Meals m on m.MealID = s.MealID
-            where u.DepID = {depID} and convert(date, s.BookedDate) = convert(date, current_timestamp)";
+            where u.DepID = {depID}";
         List<Serving> response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
-                response.Add(new Serving
-                {
-                    Quantity = Convert.ToInt32(reader["Quantity"]),
-                    UserId = Convert.ToInt32(reader["UserID"]),
-                    MealId = Convert.ToInt32(reader["MealID"]),
-                    User = new()
+                response.Add(
+                    new Serving
                     {
+                        ServingId = Convert.ToInt32(reader["ServingID"]),
+                        Quantity = Convert.ToInt32(reader["Quantity"]),
+                        BookedDate = Convert.ToDateTime(reader["BookedDate"]),
                         UserId = Convert.ToInt32(reader["UserID"]),
-                        FullName = reader["FullName"].ToString()!,
-                        DepId = Convert.ToInt32(reader["DepID"]),
-                    },
-                    Meal = new()
-                    {
                         MealId = Convert.ToInt32(reader["MealID"]),
-                        MealName = reader["MealName"].ToString()!,
-                        Time = (TimeSpan)reader["Time"],
-                    },
-                });
+                        User = new()
+                        {
+                            UserId = Convert.ToInt32(reader["UserID"]),
+                            FullName = reader["FullName"].ToString()!,
+                            DepId = Convert.ToInt32(reader["DepID"]),
+                        },
+                        Meal = new()
+                        {
+                            MealId = Convert.ToInt32(reader["MealID"]),
+                            MealName = reader["MealName"].ToString()!,
+                            Time = (TimeSpan)reader["Time"],
+                        },
+                    }
+                );
             }
         }
         return response;
@@ -205,18 +211,20 @@ public class MealDAO : IMealDAO
                 $@"insert into Forms values
                     (current_timestamp, {request.UserId}, {request.DepId})
                 declare @fid int
-                select @fid = scope_identity()";
+                select @fid = scope_identity()
+                ";
             foreach (var s in request.Servings)
             {
-                query += 
+                query +=
                     $@"if not exists (
                         select * from Servings
-	                    where MealID = {s.MealId} and UserID = {s.UserId} and BookedDate = {s.BookedDate}
+	                    where MealID = {s.MealId} and UserID = {s.UserId} and convert(varchar, BookedDate, 105) = '{s.BookedDate}'
                     )
                         begin
                             insert into Servings values
-                                ({s.Quantity}, '{s.BookedDate}', @fid, {s.MealId}, {s.UserId})
-                        end";
+                                ({s.Quantity}, convert(datetime, '{s.BookedDate:dd-MM-yyyy}', 105), @fid, {s.MealId}, {s.UserId})
+                        end
+                ";
             }
         }
         return await _dbContext.ExecuteNonQueryAsync(query);
