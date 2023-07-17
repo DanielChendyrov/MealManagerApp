@@ -23,6 +23,7 @@ public class RequestHandler : IRequestHandler
 
         var uri = new Uri(_basePath + requestUri);
         var response = await Client.GetAsync(uri);
+
         return response;
     }
 
@@ -77,6 +78,7 @@ public class RequestHandler : IRequestHandler
 
         var uri = new Uri(_basePath + requestUri);
         var response = await Client.DeleteAsync(uri);
+
         return response;
     }
 }

@@ -24,9 +24,10 @@
                     </div>
                     @{
                         int? uid = Context.Session.GetInt32("UserID");
+                        string? compRole = Context.Session.GetString("CompRole");
+                        string? sysRole = Context.Session.GetString("SysRole");
                         if (uid != null && uid > 0)
                         {
-                            string? sysRole = Context.Session.GetString("SysRole");
                             if (sysRole != null && sysRole == "Admin")
                             {
                                 <div class="" id="adminDropdown">
@@ -61,14 +62,32 @@
                                             <li>
                                                 <a class="dropdown-item" asp-area="" asp-controller="Form" asp-action="Personal">Đăng ký suất cá nhân</a>
                                             </li>
-                                            @{
-                                                string? compRole = Context.Session.GetString("CompRole");
-                                                if (compRole != null && compRole == "Tập thể")
-                                                {
-                                                    <li>
-                                                        <a class="dropdown-item" asp-area="" asp-controller="Form" asp-action="Department">Đăng ký suất tập thể</a>
-                                                    </li>
-                                                }
+                                            @if (compRole != null && compRole == "Tập thể")
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Form" asp-action="Department">Đăng ký suất tập thể</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="" id="statsDropdown">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" id="statsDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Thống kê
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="statsDropdownLink">
+                                            <li>
+                                                <a class="dropdown-item" asp-area="" asp-controller="Statistics" asp-action="Personal">Thống kê cá nhân</a>
+                                            </li>
+                                            @if (sysRole != null && sysRole == "Admin")
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Statistics" asp-action="Department">Thống kê các phòng ban</a>
+                                                </li>
                                             }
                                         </ul>
                                     </li>
