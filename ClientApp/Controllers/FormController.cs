@@ -17,8 +17,8 @@ public class FormController : Controller
 
     public async Task<IActionResult> Personal()
     {
-        int? uid = HttpContext.Session.GetInt32("UserID");
-        if (uid == null || uid <= 0)
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        if (userID == null || userID <= 0)
         {
             return Redirect("/Home");
         }
@@ -43,7 +43,7 @@ public class FormController : Controller
                 models.Servings = (
                     await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>()
                 )!
-                    .Where(s => s.UserID == uid)
+                    .Where(s => s.UserID == userID)
                     .ToList();
             }
             models.ServerDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -56,8 +56,8 @@ public class FormController : Controller
 
     public async Task<IActionResult> Department()
     {
-        int? uid = HttpContext.Session.GetInt32("UserID");
-        if (uid == null || uid <= 0)
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        if (userID == null || userID <= 0)
         {
             return Redirect("/Home");
         }
@@ -90,7 +90,7 @@ public class FormController : Controller
                 models.Servings = (
                     await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>()
                 )!
-                    .Where(s => s.UserID == uid)
+                    .Where(s => s.UserID == userID)
                     .ToList();
             }
             models.Users = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
@@ -106,8 +106,8 @@ public class FormController : Controller
     {
         try
         {
-            int? uid = HttpContext.Session.GetInt32("UserID");
-            if (uid == null || uid <= 0)
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            if (userID == null || userID <= 0)
             {
                 return Redirect("/Home");
             }
@@ -117,23 +117,23 @@ public class FormController : Controller
                 FormModel request =
                     new()
                     {
-                        UserID = Convert.ToInt32(uid),
+                        UserID = Convert.ToInt32(userID),
                         DepID = Convert.ToInt32(HttpContext.Session.GetInt32("DepID")),
                     };
-                var mealID = collection["MealID"].ToList();
-                var quantity = collection["Quantity"].ToList();
-                var mealTime = collection["MealTime"].ToList();
-                for (int i = 0; i < mealID.Count; i++)
+                var mealIDCol = collection["MealID"].ToList();
+                var quantityCol = collection["Quantity"].ToList();
+                var mealTimeCol = collection["MealTime"].ToList();
+                for (int i = 0; i < mealIDCol.Count; i++)
                 {
                     request.Servings.Add(
                         new ServingModel
                         {
-                            Quantity = Convert.ToInt32(quantity[i]),
+                            Quantity = Convert.ToInt32(quantityCol[i]),
                             BookedDate = Convert
                                 .ToDateTime(collection["BookedDate"])
-                                .Add(TimeSpan.Parse(mealTime[i])),
-                            MealID = Convert.ToInt32(mealID[i]),
-                            UserID = Convert.ToInt32(uid),
+                                .Add(TimeSpan.Parse(mealTimeCol[i])),
+                            MealID = Convert.ToInt32(mealIDCol[i]),
+                            UserID = Convert.ToInt32(userID),
                         }
                     );
                 }
@@ -156,8 +156,8 @@ public class FormController : Controller
     {
         try
         {
-            int? uid = HttpContext.Session.GetInt32("UserID");
-            if (uid == null || uid <= 0)
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            if (userID == null || userID <= 0)
             {
                 return Redirect("/Home");
             }
@@ -167,27 +167,27 @@ public class FormController : Controller
                 FormModel request =
                     new()
                     {
-                        UserID = Convert.ToInt32(uid),
+                        UserID = Convert.ToInt32(userID),
                         DepID = Convert.ToInt32(HttpContext.Session.GetInt32("DepID")),
                     };
-                var userID = collection["UserID"].ToList();
-                foreach (var u in userID)
+                var userIDCol = collection["UserID"].ToList();
+                foreach (var u in userIDCol)
                 {
                     if (collection["MealID" + u].Count > 0)
                     {
-                        var mealID = collection["MealID" + u].ToList();
-                        var quantity = collection["Quantity" + u].ToList();
-                        var mealTime = collection["MealTime" + u].ToList();
-                        for (int i = 0; i < mealID.Count; i++)
+                        var mealIDCol = collection["MealID" + u].ToList();
+                        var quantityCol = collection["Quantity" + u].ToList();
+                        var mealTimeCol = collection["MealTime" + u].ToList();
+                        for (int i = 0; i < mealIDCol.Count; i++)
                         {
                             request.Servings.Add(
                                 new ServingModel
                                 {
-                                    Quantity = Convert.ToInt32(quantity[i]),
+                                    Quantity = Convert.ToInt32(quantityCol[i]),
                                     BookedDate = Convert
                                         .ToDateTime(collection["BookedDate"])
-                                        .Add(TimeSpan.Parse(mealTime[i])),
-                                    MealID = Convert.ToInt32(mealID[i]),
+                                        .Add(TimeSpan.Parse(mealTimeCol[i])),
+                                    MealID = Convert.ToInt32(mealIDCol[i]),
                                     UserID = Convert.ToInt32(u),
                                 }
                             );

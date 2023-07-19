@@ -25,9 +25,36 @@ public class MealManager : IMealManager
         return Mapper.Map<List<MealDTO>>(await MealDAO.GetAllMeals());
     }
 
-    public async Task<List<ServingDTO>> GetPersonalMonthlyStats(int uid)
+    public async Task<List<PersonalMonthlyStatsDTO>> GetPersonalMonthlyStats(int uid)
     {
-        return Mapper.Map<List<ServingDTO>>(await MealDAO.GetPersonalMonthlyStats(uid));
+        var dtoList = Mapper.Map<List<ServingDTO>>(await MealDAO.GetPersonalMonthlyStats(uid));
+        var dateList = dtoList.Select(s => s.BookedDate.Date).Distinct().ToList();
+        var mealList = dtoList.Select(s => s.MealID).Distinct().ToList();
+        List<PersonalMonthlyStatsDTO> result = new();
+        if (!dateList.IsNullOrEmpty() && !mealList.IsNullOrEmpty())
+        {
+            foreach (var d in dateList)
+            {
+                PersonalMonthlyStatsDTO item = new() { UserID = uid, BookedDate = d.Date, };
+                foreach (var m in mealList)
+                {
+                    item.MealStats.Add(
+                        new CustomMealStatsDTO
+                        {
+                            MealID = m,
+                            TotalServing = Convert.ToInt32(
+                                dtoList
+                                    .Where(s => s.BookedDate.Date == d.Date && s.MealID == m)
+                                    .Select(s => s.Quantity)
+                                    .FirstOrDefault()
+                            ),
+                        }
+                    );
+                }
+                result.Add(item);
+            }
+        }
+        return result;
     }
 
     public async Task<List<ServingDTO>> GetCompanyDailyStats(DateTime requestDate)
@@ -47,13 +74,13 @@ public class MealManager : IMealManager
         {
             foreach (var u in userList)
             {
-                CompanyMonthlyStatsDTO item = new() { UserID = u.UserID, User = u };
+                CompanyMonthlyStatsDTO item = new() { UserID = u!.UserID, User = u };
                 foreach (var m in mealList)
                 {
                     item.MealStats.Add(
                         new CustomMealStatsDTO
                         {
-                            MealID = m.MealID,
+                            MealID = m!.MealID,
                             Meal = m,
                             TotalServing = dtoList
                                 .Where(s => s.UserID == u.UserID && s.MealID == m.MealID)

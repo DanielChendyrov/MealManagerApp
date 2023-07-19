@@ -1,7 +1,79 @@
-﻿
-@{
-    ViewData["Title"] = "Personal";
+﻿@{
+    ViewData["Title"] = "Thống kê cá nhân";
 }
 
-<h1>Personal</h1>
+@model dynamic
 
+@{
+    int? userID = Context.Session.GetInt32("UserID");
+    string? fullName = Context.Session.GetString("FullName");
+    int? depID = Context.Session.GetInt32("DepID");
+    string? depName = Context.Session.GetString("DepName");
+}
+
+<div class="row justify-content-center">
+    <div class="col-9 col-md-9 col-lg-6 mt-5">
+        @if (Model != null)
+        {
+            <p class="h4">Thống kê ăn cá nhân</p>
+            <p>Họ tên: @fullName</p>
+            <p>Phòng: @depName</p>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Stt</th>
+                        <th scope="col">Ngày</th>
+                        @if (Model.Meals.Count > 0)
+                        {
+                            foreach (var m in Model.Meals)
+                            {
+                                <th scope="col">@m.MealName</th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        if (Model.Statistics.Count > 0)
+                        {
+                            foreach (var s in Model.Statistics)
+                            {
+                                <tr>
+                                    <th scope="row">@i</th>
+                                    <td>@s.BookedDate.ToString("dd/MM/yyyy")</td>
+                                    @foreach (var m in s.MealStats)
+                                    {
+                                        if (m.TotalServing > 0)
+                                        {
+                                            <td>@m.TotalServing</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    }
+                                </tr>
+                                i++;
+                            }
+                        }
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th scope="row">Tổng</th>
+                        <td></td>
+                        @if (Model.Totals.Count > 0)
+                        {
+                            foreach (var t in Model.Totals)
+                            {
+                                <th scope="row">@t</th>
+                            }
+                        }
+                    </tr>
+                </tfoot>
+            </table>
+        }
+    </div>
+</div>

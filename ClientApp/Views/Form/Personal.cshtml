@@ -1,64 +1,64 @@
 ﻿@{
-    ViewData["Title"] = "Personal";
+    ViewData["Title"] = "Đăng ký cá nhân";
 }
 
 @model dynamic
 
 @{
-    int? uid = Context.Session.GetInt32("UserID");
+    int? userID = Context.Session.GetInt32("UserID");
     string? fullName = Context.Session.GetString("FullName");
     int? depID = Context.Session.GetInt32("DepID");
     string? depName = Context.Session.GetString("DepName");
+}
 
-    <div class="row justify-content-center">
-        <div class="col-9 col-md-9 col-lg-6 mt-5">
-            @if (Model != null)
-            {
-                <p class="h4">Đăng ký ăn cá nhân</p>
-                <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="PersonalSubmit">
-                    <br />
-                    <div class="form-group">
-                        <label for="user" class="form-label">Họ tên: @fullName</label>
-                        <input type="hidden" class="form-control" id="user" name="UserID" value="@uid">
+<div class="row justify-content-center">
+    <div class="col-9 col-md-9 col-lg-6 mt-5">
+        @if (Model != null)
+        {
+            <p class="h4">Đăng ký ăn cá nhân</p>
+            <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="PersonalSubmit">
+                <br />
+                <div class="form-group">
+                    <label for="user" class="form-label">Họ tên: @fullName</label>
+                    <input type="hidden" class="form-control" id="user" name="UserID" value="@userID">
+                </div>
+                <div class="form-group">
+                    <label for="department" class="form-label">Phòng ban: @depName</label>
+                    <input type="hidden" class="form-control" id="department" name="DepID" value="@depID">
+                </div>
+                @if (Model.Meals.Count > 0)
+                {
+                    <div class="row mb-5">
+                        <label for="bookedDate" class="col-form-label col-md-4 col-lg-3 col-xxl-2">Ngày đặt lịch</label>
+                        <div class="col-md-8 col-lg-9 col-xxl-10">
+                            <input type="date" class="form-control" id="bookedDate" name="BookedDate">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="department" class="form-label">Phòng ban: @depName</label>
-                        <input type="hidden" class="form-control" id="department" name="DepID" value="@depID">
-                    </div>
-                    @if (Model.Meals.Count > 0)
+                    @foreach (var m in Model.Meals)
                     {
-                        <div class="row mb-5">
-                            <label for="bookedDate" class="col-form-label col-md-4 col-lg-3 col-xxl-2">Ngày đặt lịch</label>
-                            <div class="col-md-8 col-lg-9 col-xxl-10">
-                                <input type="date" class="form-control" id="bookedDate" name="BookedDate">
+                        <div class="row mb-3">
+                            <div class="form-check col-sm-2 col-md-4 col-lg-3 col-xxl-2">
+                                <input type="checkbox" class="form-check-input" id="@m.MealID" name="toggleCheck">
+                                <label for="@m.MealID" class="form-check-label">@m.MealName</label>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="@("Quantity" + m.MealID)" name="Quantity" disabled>
+                                <input type="hidden" class="form-control" id="@("MealID" + m.MealID)" name="MealID" value="@m.MealID" disabled>
+                                <input type="hidden" class="form-control" id="@("MealTime" + m.MealID)" name="MealTime" value="@m.Time">
                             </div>
                         </div>
-                        @foreach (var m in Model.Meals)
-                        {
-                            <div class="row mb-3">
-                                <div class="form-check col-sm-2 col-md-4 col-lg-3 col-xxl-2">
-                                    <input type="checkbox" class="form-check-input" id="@m.MealID" name="toggleCheck">
-                                    <label for="@m.MealID" class="form-check-label">@m.MealName</label>
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control" id="@("Quantity" + m.MealID)" name="Quantity" disabled>
-                                    <input type="hidden" class="form-control" id="@("MealID" + m.MealID)" name="MealID" value="@m.MealID" disabled>
-                                    <input type="hidden" class="form-control" id="@("MealTime" + m.MealID)" name="MealTime" value="@m.Time">
-                                </div>
-                            </div>
-                        }
-                        <button type="submit" class="btn btn-primary">Submit</button>
                     }
-                </form>
-            }
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                }
+            </form>
+        }
 
-            @if (ViewData["Error"] != null)
-            {
-                <p class="text-danger pt-2">@ViewData["Error"]</p>
-            }
-        </div>
+        @if (ViewData["Error"] != null)
+        {
+            <p class="text-danger pt-2">@ViewData["Error"]</p>
+        }
     </div>
-}
+</div>
 
 @if (Model != null)
 {

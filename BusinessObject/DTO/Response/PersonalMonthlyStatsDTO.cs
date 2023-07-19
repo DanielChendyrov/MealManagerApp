@@ -1,8 +1,8 @@
 ﻿namespace BusinessObject.DTO.Response;
 
-public class CompanyMonthlyStatsDTO
+public class PersonalMonthlyStatsDTO
 {
     public int UserID { get; set; }
-    public virtual UserDTO? User { get; set; }
+    public DateTime BookedDate { get; set; }
     public List<CustomMealStatsDTO> MealStats { get; set; } = new();
 }

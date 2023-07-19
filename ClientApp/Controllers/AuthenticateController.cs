@@ -18,8 +18,8 @@ public class AuthenticateController : Controller
 
     public IActionResult LogIn()
     {
-        int? uid = HttpContext.Session.GetInt32("UserID");
-        if (uid != null && uid > 0)
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        if (userID != null && userID > 0)
         {
             return Redirect("/Home");
         }
@@ -28,11 +28,12 @@ public class AuthenticateController : Controller
 
     public async Task<IActionResult> SignUp()
     {
-        int? uid = HttpContext.Session.GetInt32("UserID");
-        if (uid != null && uid > 0)
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        if (userID != null && userID > 0)
         {
             return Redirect("/Home");
         }
+
         dynamic models = new ExpandoObject();
         var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
         var compRoleGet = await RequestHandler.GetAsync("Role/GetAllCompanyRoles");
@@ -60,8 +61,8 @@ public class AuthenticateController : Controller
     {
         try
         {
-            int? uid = HttpContext.Session.GetInt32("UserID");
-            if (uid != null && uid > 0)
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            if (userID != null && userID > 0)
             {
                 return Redirect("/Home");
             }
@@ -77,8 +78,8 @@ public class AuthenticateController : Controller
     {
         try
         {
-            int? uid = HttpContext.Session.GetInt32("UserID");
-            if (uid != null && uid > 0)
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            if (userID != null && userID > 0)
             {
                 return Redirect("/Home");
             }

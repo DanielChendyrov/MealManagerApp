@@ -9,11 +9,6 @@ public class RequestHandler : IRequestHandler
 
     private const string _basePath = "http://localhost:5000/api/";
 
-    //public RequestHandler()
-    //{
-    //    Client = new();
-    //}
-
     public async Task<HttpResponseMessage> GetAsync(string requestUri, string token = "")
     {
         if (!string.IsNullOrEmpty(token))

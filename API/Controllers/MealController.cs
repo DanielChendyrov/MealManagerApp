@@ -37,6 +37,7 @@ public class MealController : ControllerBase
     }
 
     [HttpGet]
+    [Route("{uid}")]
     public async Task<IActionResult> GetPersonalMonthlyStats(int uid)
     {
         try
@@ -44,7 +45,7 @@ public class MealController : ControllerBase
             var result = await MealManager.GetPersonalMonthlyStats(uid);
             if (result.IsNullOrEmpty())
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(result);
         }

@@ -15,8 +15,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        int? uid = HttpContext.Session.GetInt32("UserID");
-        if (uid != null && uid > 0)
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        if (userID != null && userID > 0)
         {
             return Redirect("/Form/Personal");
         }

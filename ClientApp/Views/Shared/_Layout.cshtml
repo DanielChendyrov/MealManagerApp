@@ -18,15 +18,18 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-start">
-                    <div class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                    </div>
-                    @{
-                        int? uid = Context.Session.GetInt32("UserID");
-                        string? compRole = Context.Session.GetString("CompRole");
-                        string? sysRole = Context.Session.GetString("SysRole");
-                        if (uid != null && uid > 0)
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <div class="d-sm-inline-flex justify-content-start">
+                        <div class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        </div>
+                        @{
+                            int? userID = Context.Session.GetInt32("UserID");
+                            string? compRole = Context.Session.GetString("CompRole");
+                            string? sysRole = Context.Session.GetString("SysRole");
+                        }
+
+                        @if (userID != null && userID > 0)
                         {
                             if (sysRole != null && sysRole == "Admin")
                             {
@@ -94,11 +97,34 @@
                                 </ul>
                             </div>
                         }
-                    }
+                    </div>
+                    <div class="d-sm-inline-flex justify-content-end">
+                        @if (userID != null && userID > 0)
+                        {
+                            <div class="" id="profileDropdown">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" id="profileDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            @Context.Session.GetString("FullName")
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="profileDropdownLink">
+                                            <li>
+                                                <a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="ViewProfile">Hồ sơ</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="ViewOrders">Suất ăn</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
