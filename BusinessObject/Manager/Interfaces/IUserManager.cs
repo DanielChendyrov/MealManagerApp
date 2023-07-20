@@ -10,5 +10,6 @@ namespace BusinessObject.Manager.Interfaces
         Task<bool> EditUser(UserDTO request);
         Task<List<UserDTO>> GetAllUsers();
         Task<List<UserDTO>> GetUsersByDep(int depID);
+        Task<UserDTO> GetUserByID(int uid);
     }
 }

@@ -3,8 +3,8 @@
 public class UserModel
 {
     public int UserID { get; set; }
+    public string? Username { get; set; }
     public string? FullName { get; set; }
-    public string? UserName { get; set; }
     public int DepID { get; set; }
     public DepartmentModel? Dep { get; set; }
     public int CompRoleID { get; set; }

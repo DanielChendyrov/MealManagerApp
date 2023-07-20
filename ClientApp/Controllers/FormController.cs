@@ -87,11 +87,7 @@ public class FormController : Controller
             models.Servings = new List<ServingModel>();
             if (servingGet.ReasonPhrase != "No Content")
             {
-                models.Servings = (
-                    await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>()
-                )!
-                    .Where(s => s.UserID == userID)
-                    .ToList();
+                models.Servings = await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>();
             }
             models.Users = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
             models.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

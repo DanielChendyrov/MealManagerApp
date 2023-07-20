@@ -28,6 +28,11 @@ public class UserManager : IUserManager
         return Mapper.Map<List<UserDTO>>(await UserDAO.GetAllUsers());
     }
 
+    public async Task<UserDTO> GetUserByID(int uid)
+    {
+        return Mapper.Map<UserDTO>(await UserDAO.GetUserByID(uid));
+    }
+
     public async Task<List<UserDTO>> GetUsersByDep(int depID)
     {
         return Mapper.Map<List<UserDTO>>(await UserDAO.GetUsersByDep(depID));

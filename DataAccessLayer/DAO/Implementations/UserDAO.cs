@@ -59,6 +59,50 @@ public class UserDAO : IUserDAO
         return response;
     }
 
+    public async Task<User> GetUserByID(int uid)
+    {
+        string query =
+            $@"select u.UserID, u.FullName, u.Username, u.[Password], d.*, cr.*, sr.*
+                from Users u 
+            join Departments d on d.DepID = u.DepID
+            join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
+            join SystemRoles sr on sr.SysRoleID = u.SysRoleID
+            where u.UserID = {uid}";
+        User response = new();
+        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        {
+            while (reader.Read())
+            {
+                response = new()
+                {
+                    UserId = Convert.ToInt32(reader["UserID"]),
+                    FullName = reader["FullName"].ToString()!,
+                    Username = reader["Username"].ToString()!,
+                    Password = reader["Password"].ToString()!,
+                    DepId = Convert.ToInt32(reader["DepID"]),
+                    CompRoleId = Convert.ToInt32(reader["CompRoleID"]),
+                    SysRoleId = Convert.ToInt32(reader["SysRoleID"]),
+                    Dep = new()
+                    {
+                        DepId = Convert.ToInt32(reader["DepID"]),
+                        DepName = reader["DepName"].ToString()!,
+                    },
+                    CompRole = new()
+                    {
+                        CompRoleId = Convert.ToInt32(reader["CompRoleID"]),
+                        CompRoleName = reader["CompRoleName"].ToString()!,
+                    },
+                    SysRole = new()
+                    {
+                        SysRoleId = Convert.ToInt32(reader["SysRoleID"]),
+                        SysRoleName = reader["SysRoleName"].ToString()!,
+                    },
+                };
+            }
+        }
+        return response;
+    }
+
     public async Task<List<User>> GetUsersByDep(int depId)
     {
         string query =

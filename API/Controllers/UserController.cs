@@ -41,6 +41,25 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpGet, Authorize]
+    [Route("{userID}")]
+    public async Task<IActionResult> GetUserByID(int userID)
+    {
+        try
+        {
+            var result = await UserManager.GetUserByID(userID);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
     [HttpGet, Authorize(Roles = "Admin, Tập thể")]
     [Route("{depID}")]
     public async Task<IActionResult> GetUsersByDep(int depID)

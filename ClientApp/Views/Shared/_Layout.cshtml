@@ -110,12 +110,15 @@
                                         <a class="nav-link dropdown-toggle" id="profileDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             @Context.Session.GetString("FullName")
                                         </a>
-                                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="profileDropdownLink">
+                                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="profileDropdownLink">
                                             <li>
                                                 <a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="ViewProfile">Hồ sơ</a>
                                             </li>
                                             <li>
                                                 <a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="ViewOrders">Suất ăn</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-area="" asp-controller="Authenticate" asp-action="LogOut">Đăng xuất</a>
                                             </li>
                                         </ul>
                                     </li>

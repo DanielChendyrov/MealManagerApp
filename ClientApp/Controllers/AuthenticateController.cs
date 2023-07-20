@@ -153,4 +153,14 @@ public class AuthenticateController : Controller
         }
         return false;
     }
+
+    public IActionResult Logout()
+    {
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        if (userID != null && userID > 0)
+        {
+            HttpContext.Session.Clear();
+        }
+        return Redirect("/Home");
+    }
 }

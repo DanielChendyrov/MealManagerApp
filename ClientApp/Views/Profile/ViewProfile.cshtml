@@ -1,7 +1,43 @@
-﻿
-@{
-    ViewData["Title"] = "ViewProfile";
+﻿@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
 }
 
-<h1>ViewProfile</h1>
+@model UserModel
 
+@{
+    int? userID = Context.Session.GetInt32("UserID");
+}
+
+@if (Model != null)
+{
+    <div class="row justify-content-center">
+        <div class="col-9 col-md-9 col-lg-6 mt-5">
+            <p class="h4"> Thông tin hồ sơ</p>
+            <div class="row d-flex align-items-center mb-3">
+                <div class="col-4">Họ tên:</div>
+                <div class="col-8">@Model.FullName</div>
+            </div>
+            <div class="row d-flex align-items-center mb-3">
+                <div class="col-4">Phòng ban:</div>
+                <div class="col-8">@Model.Dep!.DepName</div>
+            </div>
+            <div class="row d-flex align-items-center mb-3">
+                <div class="col-4">Tên đăng nhập:</div>
+                <div class="col-8">@Model.Username</div>
+            </div>
+            <div class="row d-flex align-items-center mb-3">
+                <div class="col-4">Quyền hệ thống:</div>
+                <div class="col-8">@Model.SysRole!.SysRoleName</div>
+            </div>
+            <div class="row d-flex align-items-center mb-3">
+                <div class="col-4">Quyền đăng ký ăn ca:</div>
+                <div class="col-8">@Model.CompRole!.CompRoleName</div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (ViewData["Error"] != null)
+{
+    <p class="text-danger pt-2">@ViewData["Error"]</p>
+}
