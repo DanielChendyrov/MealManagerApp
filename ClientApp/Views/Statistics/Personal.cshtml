@@ -15,9 +15,9 @@
     <div class="col-9 col-md-9 col-lg-6 mt-5">
         @if (Model != null)
         {
-            <p class="h4">Thống kê ăn cá nhân</p>
-            <p>Họ tên: @fullName</p>
-            <p>Phòng: @depName</p>
+            <p class="h4 text-center">Thống kê ăn cá nhân</p>
+            <p class="m-0 text-center">Họ tên: @fullName</p>
+            <p class="text-center">Phòng: @depName</p>
 
             <table class="table">
                 <thead>
@@ -36,27 +36,28 @@
                 <tbody>
                     @{
                         int i = 1;
-                        if (Model.Statistics.Count > 0)
+                    }
+
+                    @if (Model.Statistics.Count > 0)
+                    {
+                        foreach (var s in Model.Statistics)
                         {
-                            foreach (var s in Model.Statistics)
-                            {
-                                <tr>
-                                    <th scope="row">@i</th>
-                                    <td>@s.BookedDate.ToString("dd/MM/yyyy")</td>
-                                    @foreach (var m in s.MealStats)
+                            <tr>
+                                <th scope="row">@i</th>
+                                <td>@s.BookedDate.ToString("dd/MM/yyyy")</td>
+                                @foreach (var m in s.MealStats)
+                                {
+                                    if (m.TotalServing > 0)
                                     {
-                                        if (m.TotalServing > 0)
-                                        {
-                                            <td>@m.TotalServing</td>
-                                        }
-                                        else
-                                        {
-                                            <td></td>
-                                        }
+                                        <td>@m.TotalServing</td>
                                     }
-                                </tr>
-                                i++;
-                            }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
+                            </tr>
+                            i++;
                         }
                     }
                 </tbody>

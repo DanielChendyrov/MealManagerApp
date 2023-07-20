@@ -55,12 +55,13 @@ public class MealController : ControllerBase
         }
     }
 
-    [HttpPost, Authorize(Roles = "Admin")]
-    public async Task<IActionResult> GetCompanyDailyStats(DateTime requestDate)
+    [HttpGet, Authorize(Roles = "Admin")]
+    [Route("{date}")]
+    public async Task<IActionResult> GetCompanyDailyStats(string date)
     {
         try
         {
-            var result = await MealManager.GetCompanyDailyStats(requestDate);
+            var result = await MealManager.GetCompanyDailyStats(Convert.ToDateTime(date));
             if (result.IsNullOrEmpty())
             {
                 return NotFound();
@@ -73,15 +74,16 @@ public class MealController : ControllerBase
         }
     }
 
-    [HttpPost, Authorize(Roles = "Admin")]
-    public async Task<IActionResult> GetCompanyMonthlyStats(DateTime requestDate)
+    [HttpGet, Authorize(Roles = "Admin")]
+    [Route("{date}")]
+    public async Task<IActionResult> GetCompanyMonthlyStats(string date)
     {
         try
         {
-            var result = await MealManager.GetCompanyMonthlyStats(requestDate);
+            var result = await MealManager.GetCompanyMonthlyStats(Convert.ToDateTime(date));
             if (result.IsNullOrEmpty())
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(result);
         }

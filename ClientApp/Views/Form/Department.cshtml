@@ -15,22 +15,22 @@
     <div class="col-9 col-md-9 col-lg-6 mt-5">
         @if (Model != null)
         {
-            <p class="h4">Đăng ký ăn tập thể</p>
+            <p class="h4 text-center">Đăng ký ăn tập thể</p>
             <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="DepartmentSubmit">
                 <br />
-                <div class="form-group">
+                <div class="form-group d-flex justify-content-center">
                     <label for="user" class="form-label">Họ tên: @fullName</label>
                     <input type="hidden" class="form-control" id="user" name="UserID" value="@userID">
                 </div>
-                <div class="form-group">
+                <div class="form-group d-flex justify-content-center">
                     <label for="department" class="form-label">Phòng ban: @depName</label>
                     <input type="hidden" class="form-control" id="department" name="DepID" value="@depID">
                 </div>
                 @if (Model.Users.Count > 0 && Model.Meals.Count > 0)
                 {
-                    <div class="row mb-5">
-                        <label for="bookedDate" class="col-form-label col-md-4 col-lg-3 col-xxl-2">Ngày đặt lịch</label>
-                        <div class="col-md-8 col-lg-9 col-xxl-10">
+                    <div class="row mb-5 d-flex justify-content-center">
+                        <label for="bookedDate" class="col-form-label col-sm-4 col-md-4 col-lg-4 col-xxl-3">Ngày đặt lịch</label>
+                        <div class="col-sm-5 col-md-5 col-lg-5 col-xxl-4">
                             <input type="date" class="form-control" id="bookedDate" name="BookedDate" value="@DateTime.Today.ToString("yyyy-MM-dd")">
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                                 <tr>
                                     <td>
                                         <p>@u.FullName</p>
-                                        <input type="hidden" class="form-control" id="@("User" + u.UserID)" name="UserID" value="@u.UserID">
+                                        <input type="hidden" class="form-control" id="@("User" + u.UserID)" name="RegUserID" value="@u.UserID">
                                     </td>
                                     @foreach (var m in Model.Meals)
                                     {
@@ -72,7 +72,9 @@
                             }
                         </tbody>
                     </table>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
                 }
             </form>
         }
@@ -104,9 +106,9 @@
                 }
 
                 if (event.target.name === "BookedDate") {
-                    var currentDate = "@Model.ServerDate";
-                    var inputDate = new Date(new Date(event.target.value).toDateString());
-                    if (Date.parse(inputDate) < Date.parse(currentDate)) {
+                    var currentDate = "@Model.CurrentDate";
+                    var inputDate = event.target.value;
+                    if (Date.parse(inputDate) < Date.parse(currentDate.slice(0, 10))) {
                         event.target.value = currentDate.slice(0, 10);
                         checkTime(currentDate);
                         alert("Không thể đăng ký cho quá khứ.")
@@ -158,7 +160,7 @@
             });
 
             document.addEventListener("DOMContentLoaded", function () {
-                currentDate = "@Model.ServerDate";
+                currentDate = "@Model.CurrentDate";
                 document.getElementById("bookedDate").value = currentDate.slice(0, 10);
                 checkTime(currentDate);
             });
@@ -174,7 +176,7 @@
                             mc.id.indexOf("r") + 1
                         )).value;
 
-                    if (new Date(currentDate).getHours() > timeString.slice(0, 2)) {
+                    if (new Date(currentDate).getHours() + 1 > timeString.slice(0, 2)) {
                         mc.checked = false;
                         mc.disabled = true;
                     } else {

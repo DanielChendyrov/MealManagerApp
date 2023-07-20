@@ -89,7 +89,10 @@
                                             @if (sysRole != null && sysRole == "Admin")
                                             {
                                                 <li>
-                                                    <a class="dropdown-item" asp-area="" asp-controller="Statistics" asp-action="Department">Thống kê các phòng ban</a>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Statistics" asp-action="CompanyDaily">Thống kê đơn vị (ngày)</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" asp-area="" asp-controller="Statistics" asp-action="CompanyMonthly">Thống kê đơn vị (tháng)</a>
                                                 </li>
                                             }
                                         </ul>
@@ -133,9 +136,9 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            <span class="fw-bold m-0">ABC Ltd - XYZ Group</span> |
-            <span class="fw-light m-0">Email: abc@xyz.domain.com</span> |
-            <span class="fw-light m-0">Tel: (+84) 9 69 420 113</span>
+            <span class="fw-bold">ABC Ltd - XYZ Group</span> |
+            <span class="fw-light">Email: abc@xyz.domain.com</span> |
+            <span class="fw-light">Tel: (+84) 9 69 420 113</span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

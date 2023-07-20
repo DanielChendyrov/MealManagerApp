@@ -29,7 +29,7 @@ public class MealManager : IMealManager
     {
         var dtoList = Mapper.Map<List<ServingDTO>>(await MealDAO.GetPersonalMonthlyStats(uid));
         var dateList = dtoList.Select(s => s.BookedDate.Date).Distinct().ToList();
-        var mealList = dtoList.Select(s => s.MealID).Distinct().ToList();
+        var mealList = dtoList.Select(s => s.Meal).DistinctBy(m => m.MealID).ToList();
         List<PersonalMonthlyStatsDTO> result = new();
         if (!dateList.IsNullOrEmpty() && !mealList.IsNullOrEmpty())
         {
@@ -41,10 +41,11 @@ public class MealManager : IMealManager
                     item.MealStats.Add(
                         new CustomMealStatsDTO
                         {
-                            MealID = m,
+                            MealID = m.MealID,
+                            Meal = m,
                             TotalServing = Convert.ToInt32(
                                 dtoList
-                                    .Where(s => s.BookedDate.Date == d.Date && s.MealID == m)
+                                    .Where(s => s.BookedDate.Date == d.Date && s.MealID == m.MealID)
                                     .Select(s => s.Quantity)
                                     .FirstOrDefault()
                             ),
@@ -67,8 +68,8 @@ public class MealManager : IMealManager
         var dtoList = Mapper.Map<List<ServingDTO>>(
             await MealDAO.GetCompanyMonthlyStats(requestDate)
         );
-        var userList = dtoList.Select(s => s.User).Distinct().ToList();
-        var mealList = dtoList.Select(s => s.Meal).Distinct().ToList();
+        var userList = dtoList.Select(s => s.User).DistinctBy(u => u.UserID).ToList();
+        var mealList = dtoList.Select(s => s.Meal).DistinctBy(m => m.MealID).ToList();
         List<CompanyMonthlyStatsDTO> result = new();
         if (!userList.IsNullOrEmpty() && !mealList.IsNullOrEmpty())
         {
@@ -89,6 +90,7 @@ public class MealManager : IMealManager
                         }
                     );
                 }
+                item.Total = item.MealStats.Select(ms => ms.TotalServing).Sum();
                 result.Add(item);
             }
         }

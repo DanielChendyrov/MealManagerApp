@@ -124,8 +124,8 @@ public class MealDAO : IMealDAO
             join Users u on u.UserID = s.UserID
             join Departments d on d.DepID = u.DepID
             join Meals m on m.MealID = s.MealID
-            where month(s.BookedDate) = month('{requestDate}')
-                and year(s.BookedDate) = year('{requestDate}')
+            where month(s.BookedDate) = month('{requestDate:yyyy-MM-dd}')
+                and year(s.BookedDate) = year('{requestDate:yyyy-MM-dd}')
             order by d.DepName, u.FullName, m.MealID";
         List<Serving> response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
@@ -138,6 +138,7 @@ public class MealDAO : IMealDAO
                         Quantity = Convert.ToInt32(reader["Quantity"]),
                         UserId = Convert.ToInt32(reader["UserID"]),
                         MealId = Convert.ToInt32(reader["MealID"]),
+                        BookedDate = Convert.ToDateTime(reader["BookedDate"]),
                         User = new()
                         {
                             UserId = Convert.ToInt32(reader["UserID"]),

@@ -46,7 +46,7 @@ public class FormController : Controller
                     .Where(s => s.UserID == userID)
                     .ToList();
             }
-            models.ServerDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            models.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             return View(models);
         }
         ViewData["Error"] =
@@ -94,7 +94,7 @@ public class FormController : Controller
                     .ToList();
             }
             models.Users = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
-            models.ServerDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            models.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             return View(models);
         }
         ViewData["Error"] =
@@ -162,7 +162,7 @@ public class FormController : Controller
                 return Redirect("/Home");
             }
 
-            if (collection["UserID"].Count > 0)
+            if (collection["RegUserID"].Count > 0)
             {
                 FormModel request =
                     new()
@@ -170,7 +170,7 @@ public class FormController : Controller
                         UserID = Convert.ToInt32(userID),
                         DepID = Convert.ToInt32(HttpContext.Session.GetInt32("DepID")),
                     };
-                var userIDCol = collection["UserID"].ToList();
+                var userIDCol = collection["RegUserID"].ToList();
                 foreach (var u in userIDCol)
                 {
                     if (collection["MealID" + u].Count > 0)
@@ -198,7 +198,7 @@ public class FormController : Controller
                 if (request.Servings.Count > 0)
                 {
                     var response = await RequestHandler.PostAsync(
-                        "Meal/RegisterPersonalMeal",
+                        "Meal/RegisterDepartmentMeal",
                         request,
                         HttpContext.Session.GetString("Jwt")!
                     );
