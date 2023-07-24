@@ -33,6 +33,32 @@
                 <div class="col-4">Quyền đăng ký ăn ca:</div>
                 <div class="col-8">@Model.CompRole!.CompRoleName</div>
             </div>
+            <div class="row d-flex align-items-center mb-3">
+                <div class="col-4">
+                    <a class="btn btn-link" id="btnToggle">Thay đổi mật khẩu</a>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <div id="passwordForm" style="display: none">
+                <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Profile" asp-action="ChangePassword">
+                    <div class="form-group">
+                        <label for="oldPassword">Nhập mật khẩu hiện tại</label>
+                        <input type="password" class="form-control" name="OldPassword" id="oldPassword" />
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nhập mật khẩu mới</label>
+                        <input type="password" class="form-control" name="NewPassword" id="newPassword" />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Nhập lại mật khẩu</label>
+                        <input type="password" class="form-control" name="PasswordConfirm" id="confirmPassword" />
+                    </div>
+                    <p class="text-danger" id="confirmValidate"></p>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary" id="btnSubmit">Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 }
@@ -40,4 +66,33 @@
 @if (ViewData["Error"] != null)
 {
     <p class="text-danger pt-2">@ViewData["Error"]</p>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        document.addEventListener("click", function (event) {
+            if (event.target.id == "btnToggle") {
+                var form = document.getElementById("passwordForm");
+                if (form.style.display == "none") {
+                    form.style.display = "block";
+                } else if (form.style.display == "block") {
+                    form.style.display = "none";
+                }
+            }
+
+            if (event.target.id == "btnSubmit") {
+                var oldPass = document.getElementById("oldPassword");
+                var newPass = document.getElementById("newPassword");
+                var confirmPass = document.getElementById("confirmPassword");
+                if (newPass.value !== confirmPass.value) {
+                    event.preventDefault();
+                    document.getElementById("confirmValidate").innerHTML = "Mật khẩu nhập lại không trùng khớp.";
+                }
+                if (oldPass.value === "" || newPass.value === "" || confirmPass.value === "") {
+                    event.preventDefault();
+                    document.getElementById("confirmValidate").innerHTML = "Các trường không thể để trống.";
+                }
+            }
+        });
+    </script>
 }

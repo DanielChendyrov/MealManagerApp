@@ -66,6 +66,7 @@ public class AuthenticateController : Controller
             {
                 return Redirect("/Home");
             }
+
             return await ConfirmCredentials(request, "LogIn");
         }
         catch (Exception ex)
@@ -83,6 +84,7 @@ public class AuthenticateController : Controller
             {
                 return Redirect("/Home");
             }
+
             SignUpModel request =
                 new()
                 {

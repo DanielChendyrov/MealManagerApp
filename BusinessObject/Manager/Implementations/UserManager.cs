@@ -2,6 +2,7 @@
 using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
 using BusinessObject.Manager.Interfaces;
+using ClientApp.Utils.Implementations;
 using DataAccessLayer.DAO.Interfaces;
 using DataAccessLayer.Domain;
 
@@ -16,11 +17,6 @@ public class UserManager : IUserManager
     {
         UserDAO = userDAO;
         Mapper = mapper;
-    }
-
-    public async Task<bool> EditUser(UserDTO request)
-    {
-        return await UserDAO.EditUser(Mapper.Map<User>(request));
     }
 
     public async Task<List<UserDTO>> GetAllUsers()
@@ -40,15 +36,45 @@ public class UserManager : IUserManager
 
     public async Task<UserDTO> LogIn(LogInDTO request)
     {
-        return Mapper.Map<UserDTO>(await UserDAO.LogIn(Mapper.Map<User>(request)));
+        var response = await UserDAO.LogIn(Mapper.Map<User>(request));
+        if (StringHasher.VerifyHash(request.Password!, "SHA512", response.Password))
+        {
+            return Mapper.Map<UserDTO>(response);
+        }
+        return new();
     }
 
     public async Task<UserDTO> SignUp(SignUpDTO request)
     {
-        if (await UserDAO.SignUp(Mapper.Map<User>(request)))
+        SignUpDTO encrypt = new()
+        {
+            Username = request.Username,
+            Password = StringHasher.ComputeHash(request.Password, "SHA512", null!),
+            FullName = request.FullName,
+            DepID = request.DepID,
+            CompRoleID = request.CompRoleID,
+            SysRoleID = request.SysRoleID,
+        };
+        if (await UserDAO.SignUp(Mapper.Map<User>(encrypt)))
         {
             return await LogIn(new() { Username = request.Username, Password = request.Password });
         }
         return new();
+    }
+
+    public async Task<bool> EditUser(UserDTO request)
+    {
+        return await UserDAO.EditUser(Mapper.Map<User>(request));
+    }
+
+    public async Task<bool> ChangePassword(ChangePasswordDTO request)
+    {
+        var response = await UserDAO.GetUserByID(request.UserID);
+        if (StringHasher.VerifyHash(request.OldPassword!, "SHA512", response.Password))
+        {
+            request.NewPassword = StringHasher.ComputeHash(request.NewPassword!, "SHA512", null!);
+            return await UserDAO.ChangePassword(Mapper.Map<User>(request));
+        }
+        return false;
     }
 }

@@ -157,7 +157,7 @@ public class UserDAO : IUserDAO
             join Departments d on d.DepID = u.DepID
             join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
             join SystemRoles sr on sr.SysRoleID = u.SysRoleID
-            where u.Username = '{request.Username}' and u.[Password] = '{request.Password}'";
+            where u.Username = '{request.Username}'";
         User response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
         {
@@ -186,7 +186,7 @@ public class UserDAO : IUserDAO
                     {
                         SysRoleId = Convert.ToInt32(reader["SysRoleID"]),
                         SysRoleName = reader["SysRoleName"].ToString()!,
-                    }
+                    },
                 };
             }
         }
@@ -201,7 +201,7 @@ public class UserDAO : IUserDAO
             )
                 begin
 	                insert into Users values
-                        ('{request.FullName}', '{request.Username}', 
+                        (N'{request.FullName}', '{request.Username}', 
                         '{request.Password}', {request.DepId},
                         {request.CompRoleId}, {request.SysRoleId})
                 end";
@@ -212,8 +212,17 @@ public class UserDAO : IUserDAO
     {
         string query =
             $@"update Users
-                set FullName = '{request.FullName}', DepID = {request.DepId},
+                set FullName = N'{request.FullName}', DepID = {request.DepId},
                     CompRoleID = {request.CompRoleId}, SysRoleID = {request.SysRoleId}
+            where UserID = {request.UserId}";
+        return await _dbContext.ExecuteNonQueryAsync(query);
+    }
+
+    public async Task<bool> ChangePassword(User request)
+    {
+        string query =
+            $@"update Users
+                set Password = '{request.Password}'
             where UserID = {request.UserId}";
         return await _dbContext.ExecuteNonQueryAsync(query);
     }

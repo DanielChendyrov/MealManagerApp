@@ -1,5 +1,6 @@
 ﻿using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
+using BusinessObject.DTO.Response;
 using BusinessObject.Manager.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -104,7 +105,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await UserManager.LogIn(request);
+            UserDTO result = await UserManager.LogIn(request);
             return ConfirmCredentials(result);
         }
         catch (Exception ex)
@@ -118,7 +119,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await UserManager.SignUp(request);
+            UserDTO result = await UserManager.SignUp(request);
             return ConfirmCredentials(result);
         }
         catch (Exception ex)
@@ -162,6 +163,24 @@ public class UserController : ControllerBase
         try
         {
             bool result = await UserManager.EditUser(request);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Please re-check input information.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPut, Authorize]
+    public async Task<IActionResult> ChangePassword(ChangePasswordDTO request)
+    {
+        try
+        {
+            bool result = await UserManager.ChangePassword(request);
             if (result)
             {
                 return Ok();

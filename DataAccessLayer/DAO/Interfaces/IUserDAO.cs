@@ -10,4 +10,5 @@ public interface IUserDAO
     Task<bool> SignUp(User request);
     Task<bool> EditUser(User request);
     Task<User> GetUserByID(int uid);
+    Task<bool> ChangePassword(User request);
 }
