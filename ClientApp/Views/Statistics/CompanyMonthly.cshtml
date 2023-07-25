@@ -45,7 +45,7 @@
                             <tr>
                                 <td colspan="@(Model.Meals.Count + 4)">@d.DepName</td>
                             </tr>
-                            @foreach (var s in Model.Statistics)
+                            foreach (var s in Model.Statistics)
                             {
                                 if (s.User.DepID == d.DepID)
                                 {
@@ -78,7 +78,6 @@
         document.addEventListener("DOMContentLoaded", function () {
             currentDate = "@Model.CurrentDate";
             document.getElementById("filterMonth").value = currentDate.slice(0, 10);
-            checkTime(currentDate);
         });
     </script>
     }

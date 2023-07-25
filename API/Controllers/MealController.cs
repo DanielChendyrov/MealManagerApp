@@ -64,7 +64,7 @@ public class MealController : ControllerBase
             var result = await MealManager.GetCompanyDailyStats(Convert.ToDateTime(date));
             if (result.IsNullOrEmpty())
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(result);
         }

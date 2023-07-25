@@ -57,7 +57,8 @@ public class FormController : Controller
     public async Task<IActionResult> Department()
     {
         int? userID = HttpContext.Session.GetInt32("UserID");
-        if (userID == null || userID <= 0)
+        string? compRole = HttpContext.Session.GetString("CompRole");
+        if (userID == null || userID <= 0 || compRole != "Tập thể")
         {
             return Redirect("/Home");
         }
@@ -153,7 +154,8 @@ public class FormController : Controller
         try
         {
             int? userID = HttpContext.Session.GetInt32("UserID");
-            if (userID == null || userID <= 0)
+            string? compRole = HttpContext.Session.GetString("CompRole");
+            if (userID == null || userID <= 0 || compRole != "Tập thể")
             {
                 return Redirect("/Home");
             }

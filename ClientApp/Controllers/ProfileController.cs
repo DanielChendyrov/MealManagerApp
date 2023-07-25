@@ -52,7 +52,7 @@ public class ProfileController : Controller
                 ChangePasswordModel request =
                     new()
                     {
-                        UserID = Convert.ToInt32(collection["UserID"]),
+                        UserID = Convert.ToInt32(userID),
                         OldPassword = collection["OldPassword"].ToString(),
                         NewPassword = collection["NewPassword"].ToString(),
                     };
