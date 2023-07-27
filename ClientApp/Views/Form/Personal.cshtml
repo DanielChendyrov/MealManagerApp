@@ -1,8 +1,9 @@
-﻿@{
+﻿@using ClientApp.Models.Binding;
+@{
     ViewData["Title"] = "Đăng ký cá nhân";
 }
 
-@model dynamic
+@model FormModel
 
 @{
     int? userID = Context.Session.GetInt32("UserID");
@@ -13,9 +14,9 @@
 
 <div class="row justify-content-center">
     <div class="col-9 col-md-9 col-lg-6 mt-5">
+        <p class="h4 text-center">Đăng ký ăn cá nhân</p>
         @if (Model != null)
         {
-            <p class="h4 text-center">Đăng ký ăn cá nhân</p>
             <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="PersonalSubmit">
                 <br />
                 <div class="form-group d-flex justify-content-center">
@@ -28,6 +29,7 @@
                 </div>
                 @if (Model.Meals.Count > 0)
                 {
+                    int i = 0;
                     <div class="row mb-5 d-flex justify-content-center">
                         <label for="bookedDate" class="col-form-label col-sm-4 col-md-4 col-lg-4 col-xxl-3">Ngày đặt lịch</label>
                         <div class="col-sm-5 col-md-5 col-lg-5 col-xxl-4">
@@ -42,11 +44,12 @@
                                 <label for="@m.MealID" class="form-check-label">@m.MealName</label>
                             </div>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="@("Quantity" + m.MealID)" name="Quantity" disabled>
-                                <input type="hidden" class="form-control" id="@("MealID" + m.MealID)" name="MealID" value="@m.MealID" disabled>
-                                <input type="hidden" class="form-control" id="@("MealTime" + m.MealID)" name="MealTime" value="@m.Time">
+                                <input type="text" class="form-control" id="@("Quantity" + m.MealID)" name="@("Servings[" + i + "].Quantity")" disabled>
+                                <input type="hidden" id="@("MealID" + m.MealID)" name="@("Servings[" + i + "].MealID")" value="@m.MealID" disabled>
+                                <input type="hidden" id="@("MealTime" + m.MealID)" name="@("Servings[" + i + "].Meal.Time")" value="@m.Time">
                             </div>
                         </div>
+                        i++;
                     }
                     <div class="d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary">Submit</button>

@@ -1,7 +1,8 @@
-﻿namespace ClientApp.Models;
+﻿namespace ClientApp.Models.Transfer;
 
 public class ServingModel
 {
+    public int ServingID { get; set; }
     public int Quantity { get; set; }
     public DateTime BookedDate { get; set; }
     public int MealID { get; set; }

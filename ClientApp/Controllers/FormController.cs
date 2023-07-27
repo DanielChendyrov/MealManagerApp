@@ -1,5 +1,5 @@
-﻿using ClientApp.Models;
-using ClientApp.Models.Request;
+﻿using ClientApp.Models.Binding;
+using ClientApp.Models.Transfer;
 using ClientApp.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
@@ -23,7 +23,7 @@ public class FormController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
+        FormModel model = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -36,18 +36,16 @@ public class FormController : Controller
 
         if (mealGet.IsSuccessStatusCode && servingGet.IsSuccessStatusCode)
         {
-            models.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            models.Servings = new List<ServingModel>();
+            model.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            model.Servings = new List<ServingModel>();
             if (servingGet.ReasonPhrase != "No Content")
             {
-                models.Servings = (
-                    await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>()
-                )!
+                model.Servings = (await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>())!
                     .Where(s => s.UserID == userID)
                     .ToList();
             }
-            models.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            return View(models);
+            model.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            return View(model);
         }
         ViewData["Error"] =
             "Đang có lỗi xảy ra với kết nối tới máy chủ, xin hãy làm mới trang web hoặc quay lại lúc khác.";
@@ -63,7 +61,7 @@ public class FormController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
+        FormModel models = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -99,7 +97,7 @@ public class FormController : Controller
         return View();
     }
 
-    public async Task<IActionResult> PersonalSubmit(IFormCollection collection)
+    public async Task<IActionResult> PersonalSubmit(FormModel model)
     {
         try
         {
@@ -109,35 +107,16 @@ public class FormController : Controller
                 return Redirect("/Home");
             }
 
-            if (collection["MealID"].Count > 0)
+            if (ModelState.IsValid)
             {
-                FormModel request =
-                    new()
-                    {
-                        UserID = Convert.ToInt32(userID),
-                        DepID = Convert.ToInt32(HttpContext.Session.GetInt32("DepID")),
-                    };
-                var mealIDCol = collection["MealID"].ToList();
-                var quantityCol = collection["Quantity"].ToList();
-                var mealTimeCol = collection["MealTime"].ToList();
-                for (int i = 0; i < mealIDCol.Count; i++)
+                foreach (var s in model.Servings)
                 {
-                    request.Servings.Add(
-                        new ServingModel
-                        {
-                            Quantity = Convert.ToInt32(quantityCol[i]),
-                            BookedDate = Convert
-                                .ToDateTime(collection["BookedDate"])
-                                .Add(TimeSpan.Parse(mealTimeCol[i])),
-                            MealID = Convert.ToInt32(mealIDCol[i]),
-                            UserID = Convert.ToInt32(userID),
-                        }
-                    );
+                    s.UserID = model.UserID;
+                    s.BookedDate = Convert.ToDateTime(model.BookedDate).Add(s.Meal!.Time);
                 }
-
                 var response = await RequestHandler.PostAsync(
                     "Meal/RegisterPersonalMeal",
-                    request,
+                    model,
                     HttpContext.Session.GetString("Jwt")!
                 );
             }
@@ -149,7 +128,7 @@ public class FormController : Controller
         }
     }
 
-    public async Task<IActionResult> DepartmentSubmit(IFormCollection collection)
+    public async Task<IActionResult> DepartmentSubmit(FormModel model)
     {
         try
         {
@@ -160,44 +139,18 @@ public class FormController : Controller
                 return Redirect("/Home");
             }
 
-            if (collection["RegUserID"].Count > 0)
+            if (ModelState.IsValid)
             {
-                FormModel request =
-                    new()
-                    {
-                        UserID = Convert.ToInt32(userID),
-                        DepID = Convert.ToInt32(HttpContext.Session.GetInt32("DepID")),
-                    };
-                var userIDCol = collection["RegUserID"].ToList();
-                foreach (var u in userIDCol)
+                foreach(var s in model.Servings)
                 {
-                    if (collection["MealID" + u].Count > 0)
-                    {
-                        var mealIDCol = collection["MealID" + u].ToList();
-                        var quantityCol = collection["Quantity" + u].ToList();
-                        var mealTimeCol = collection["MealTime" + u].ToList();
-                        for (int i = 0; i < mealIDCol.Count; i++)
-                        {
-                            request.Servings.Add(
-                                new ServingModel
-                                {
-                                    Quantity = Convert.ToInt32(quantityCol[i]),
-                                    BookedDate = Convert
-                                        .ToDateTime(collection["BookedDate"])
-                                        .Add(TimeSpan.Parse(mealTimeCol[i])),
-                                    MealID = Convert.ToInt32(mealIDCol[i]),
-                                    UserID = Convert.ToInt32(u),
-                                }
-                            );
-                        }
-                    }
+                    s.BookedDate = Convert.ToDateTime(model.BookedDate).Add(s.Meal!.Time);
                 }
 
-                if (request.Servings.Count > 0)
+                if (model.Servings.Count > 0)
                 {
                     var response = await RequestHandler.PostAsync(
                         "Meal/RegisterDepartmentMeal",
-                        request,
+                        model,
                         HttpContext.Session.GetString("Jwt")!
                     );
                 }

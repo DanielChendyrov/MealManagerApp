@@ -1,4 +1,4 @@
-﻿namespace ClientApp.Models.Response;
+﻿namespace ClientApp.Models.Transfer;
 
 public class PersonalMonthlyStatsModel
 {

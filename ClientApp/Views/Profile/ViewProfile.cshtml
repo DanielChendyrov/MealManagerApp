@@ -2,7 +2,7 @@
     ViewData["Title"] = "Hồ sơ cá nhân";
 }
 
-@model UserModel
+@model ClientApp.Models.Transfer.UserModel
 
 @{
     int? userID = Context.Session.GetInt32("UserID");
@@ -12,7 +12,7 @@
 {
     <div class="row justify-content-center">
         <div class="col-9 col-md-9 col-lg-6 mt-5">
-            <p class="h4"> Thông tin hồ sơ</p>
+            <p class="h4">Thông tin hồ sơ</p>
             <div class="row d-flex align-items-center mb-3">
                 <div class="col-4">Họ tên:</div>
                 <div class="col-8">@Model.FullName</div>

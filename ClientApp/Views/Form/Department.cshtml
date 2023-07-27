@@ -1,8 +1,9 @@
-﻿@{
+﻿@using ClientApp.Models.Binding;
+@{
     ViewData["Title"] = "Đăng ký tập thể";
 }
 
-@model dynamic
+@model FormModel
 
 @{
     int? userID = Context.Session.GetInt32("UserID");
@@ -13,9 +14,9 @@
 
 <div class="row justify-content-center">
     <div class="col-9 col-md-9 col-lg-6 mt-5">
+        <p class="h4 text-center">Đăng ký ăn tập thể</p>
         @if (Model != null)
         {
-            <p class="h4 text-center">Đăng ký ăn tập thể</p>
             <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Form" asp-action="DepartmentSubmit">
                 <br />
                 <div class="form-group d-flex justify-content-center">
@@ -31,7 +32,7 @@
                     <div class="row mb-5 d-flex justify-content-center">
                         <label for="bookedDate" class="col-form-label col-sm-4 col-md-4 col-lg-4 col-xxl-3">Ngày đặt lịch</label>
                         <div class="col-sm-5 col-md-5 col-lg-5 col-xxl-4">
-                            <input type="date" class="form-control" id="bookedDate" name="BookedDate" value="@DateTime.Today.ToString("yyyy-MM-dd")">
+                            <input type="date" class="form-control" id="bookedDate" name="BookedDate">
                         </div>
                     </div>
                     <table class="table table-borderless">
@@ -46,12 +47,12 @@
 
                         </thead>
                         <tbody>
-                            @foreach (var u in Model.Users)
+                        @{int i = 0; }
+                        @foreach (var u in Model.Users)
                             {
                                 <tr>
                                     <td>
                                         <p>@u.FullName</p>
-                                        <input type="hidden" class="form-control" id="@("User" + u.UserID)" name="RegUserID" value="@u.UserID">
                                     </td>
                                     @foreach (var m in Model.Meals)
                                     {
@@ -61,12 +62,14 @@
                                                     <input type="checkbox" class="form-check-input" id="@("Check" + m.MealID + "User" + u.UserID)" name="toggleCheck">
                                                 </div>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control" id="@("Quantity" + m.MealID + "User" + u.UserID)" name="@("Quantity" + u.UserID)" disabled>
-                                                    <input type="hidden" class="form-control" id="@("MealID" + m.MealID + "User" + u.UserID)" name="@("MealID" + u.UserID)" value="@m.MealID" disabled>
-                                                    <input type="hidden" class="form-control" id="@("MealTime" + m.MealID + "User" + u.UserID)" name="@("MealTime" + u.UserID)" value="@m.Time">
+                                                    <input type="text" class="form-control" id="@("Quantity" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Quantity")" disabled>
+                                                    <input type="hidden" class="form-control" id="@("User" + u.UserID)" name="RegUserID" name="@("Servings[" + i + "].UserID")" value="@u.UserID">
+                                                    <input type="hidden" class="form-control" id="@("MealID" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].MealID")" value="@m.MealID" disabled>
+                                                    <input type="hidden" class="form-control" id="@("MealTime" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Meal.Time")" value="@m.Time">
                                                 </div>
                                             </div>
                                         </td>
+                                        i++;
                                     }
                                 </tr>
                             }

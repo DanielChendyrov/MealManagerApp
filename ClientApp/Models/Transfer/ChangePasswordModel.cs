@@ -1,4 +1,4 @@
-﻿namespace ClientApp.Models.Request;
+﻿namespace ClientApp.Models.Transfer;
 
 public class ChangePasswordModel
 {

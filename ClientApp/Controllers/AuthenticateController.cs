@@ -1,5 +1,5 @@
-﻿using ClientApp.Models;
-using ClientApp.Models.Request;
+﻿using ClientApp.Models.Binding;
+using ClientApp.Models.Transfer;
 using ClientApp.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -34,7 +34,7 @@ public class AuthenticateController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
+        SignUpModel model = new();
         var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
         var compRoleGet = await RequestHandler.GetAsync("Role/GetAllCompanyRoles");
         var sysRoleGet = await RequestHandler.GetAsync("Role/GetAllSystemRoles");
@@ -44,12 +44,12 @@ public class AuthenticateController : Controller
             && sysRoleGet.IsSuccessStatusCode
         )
         {
-            models.Departments = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-            models.CompRoles = await compRoleGet.Content.ReadFromJsonAsync<List<CompRoleModel>>();
-            models.SysRoles = await sysRoleGet.Content.ReadFromJsonAsync<List<SysRoleModel>>();
-            if (models.Departments != null && models.CompRoles != null && models.SysRoles != null)
+            model.Departments = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+            model.CompRoles = await compRoleGet.Content.ReadFromJsonAsync<List<CompRoleModel>>();
+            model.SysRoles = await sysRoleGet.Content.ReadFromJsonAsync<List<SysRoleModel>>();
+            if (model.Departments != null && model.CompRoles != null && model.SysRoles != null)
             {
-                return View(models);
+                return View(model);
             }
         }
         ViewData["Error"] =
@@ -67,7 +67,11 @@ public class AuthenticateController : Controller
                 return Redirect("/Home");
             }
 
-            return await ConfirmCredentials(request, "LogIn");
+            if (ModelState.IsValid)
+            {
+                return await ConfirmCredentials(request, "LogIn");
+            }
+            return Redirect("/Home");
         }
         catch (Exception ex)
         {
@@ -75,7 +79,7 @@ public class AuthenticateController : Controller
         }
     }
 
-    public async Task<IActionResult> SignUpRequest(IFormCollection collection)
+    public async Task<IActionResult> SignUpRequest(SignUpModel model)
     {
         try
         {
@@ -85,17 +89,11 @@ public class AuthenticateController : Controller
                 return Redirect("/Home");
             }
 
-            SignUpModel request =
-                new()
-                {
-                    FullName = collection["FullName"].ToString(),
-                    Username = collection["Username"].ToString(),
-                    Password = collection["Password"].ToString(),
-                    DepID = Convert.ToInt32(collection["DepID"]),
-                    CompRoleID = Convert.ToInt32(collection["CompRoleID"]),
-                    SysRoleID = Convert.ToInt32(collection["SysRoleID"]),
-                };
-            return await ConfirmCredentials(request, "SignUp");
+            if (ModelState.IsValid)
+            {
+                return await ConfirmCredentials(model, "SignUp");
+            }
+            return Redirect("/Home");
         }
         catch (Exception ex)
         {

@@ -10,4 +10,6 @@ public interface IMealDAO
     Task<List<Serving>> FindExistingRegistration(int depID);
     Task<bool> RegisterMeal(Form request);
     Task<List<Meal>> GetAllMeals();
+    Task<List<Serving>> GetAllPersonalOrders(int uid);
+    Task<bool> EditMeal(List<Serving> request);
 }

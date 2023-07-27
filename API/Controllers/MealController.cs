@@ -147,4 +147,41 @@ public class MealController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpGet]
+    [Route("{uid}")]
+    public async Task<IActionResult> GetAllPersonalOrders(int uid)
+    {
+        try
+        {
+            var result = await MealManager.GetAllPersonalOrders(uid);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> EditMeal(List<ServingDTO> request)
+    {
+        try
+        {
+            var result = await MealManager.EditMeal(request);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }

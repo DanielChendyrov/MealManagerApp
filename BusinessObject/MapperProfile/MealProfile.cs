@@ -17,6 +17,7 @@ public class MealProfile : Profile
             .ForMember(des => des.Servings, opt => opt.MapFrom(src => src.Servings));
 
         CreateMap<ServingDTO, Serving>()
+            .ForMember(des => des.ServingId, opt => opt.MapFrom(src => src.ServingID))
             .ForMember(des => des.Quantity, opt => opt.MapFrom(src => src.Quantity))
             .ForMember(des => des.BookedDate, opt => opt.MapFrom(src => src.BookedDate))
             .ForMember(des => des.MealId, opt => opt.MapFrom(src => src.MealID))
@@ -24,13 +25,13 @@ public class MealProfile : Profile
             .ForMember(des => des.UserId, opt => opt.MapFrom(src => src.UserID))
             .ForMember(des => des.User, opt => opt.MapFrom(src => src.User));
         CreateMap<Serving, ServingDTO>()
+            .ForMember(des => des.ServingID, opt => opt.MapFrom(src => src.ServingId))
             .ForMember(des => des.Quantity, opt => opt.MapFrom(src => src.Quantity))
             .ForMember(des => des.BookedDate, opt => opt.MapFrom(src => src.BookedDate))
             .ForMember(des => des.MealID, opt => opt.MapFrom(src => src.MealId))
             .ForMember(des => des.Meal, opt => opt.MapFrom(src => src.Meal))
             .ForMember(des => des.UserID, opt => opt.MapFrom(src => src.UserId))
             .ForMember(des => des.User, opt => opt.MapFrom(src => src.User));
-        ;
 
         CreateMap<Meal, MealDTO>()
             .ForMember(des => des.MealID, opt => opt.MapFrom(src => src.MealId))

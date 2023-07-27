@@ -1,4 +1,4 @@
-﻿namespace ClientApp.Models;
+﻿namespace ClientApp.Models.Transfer;
 
 public class MealModel
 {

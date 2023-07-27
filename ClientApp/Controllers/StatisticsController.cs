@@ -1,5 +1,4 @@
-﻿using ClientApp.Models;
-using ClientApp.Models.Response;
+﻿using ClientApp.Models.Transfer;
 using ClientApp.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;

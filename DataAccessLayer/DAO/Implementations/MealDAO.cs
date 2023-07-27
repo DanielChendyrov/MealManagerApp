@@ -40,11 +40,11 @@ public class MealDAO : IMealDAO
     {
         string query =
             $@"select s.ServingID, s.Quantity, s.BookedDate,
-	                s.FormID, s.UserID, m.* from Servings s
-                join Meals m on m.MealID = s.MealID
-                where UserID = {uid} and month(s.BookedDate) = month(convert(date, sysdatetime()))
-	                and year(s.BookedDate) = year(convert(date, sysdatetime()))
-                order by s.BookedDate, m.MealID";
+	            s.FormID, s.UserID, m.* from Servings s
+            join Meals m on m.MealID = s.MealID
+            where UserID = {uid} and month(s.BookedDate) = month(convert(date, sysdatetime()))
+	            and year(s.BookedDate) = year(convert(date, sysdatetime()))
+            order by s.BookedDate, m.MealID";
         List<Serving> response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
         {
@@ -76,11 +76,11 @@ public class MealDAO : IMealDAO
     {
         string query =
             $@"select u.UserID, u.FullName, d.*, m.*, s.Quantity from Servings s
-                join Meals m on m.MealID = s.MealID
-                join Users u on u.UserID = s.UserID
-                join Departments d on d.DepID = u.DepID
-                where cast(s.BookedDate as date) = '{requestDate:yyyy-MM-dd}'
-                order by m.MealID, d.DepName, u.FullName";
+            join Meals m on m.MealID = s.MealID
+            join Users u on u.UserID = s.UserID
+            join Departments d on d.DepID = u.DepID
+            where cast(s.BookedDate as date) = '{requestDate:yyyy-MM-dd}'
+            order by m.MealID, d.DepName, u.FullName";
         List<Serving> response = new();
         using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
         {
@@ -225,8 +225,53 @@ public class MealDAO : IMealDAO
                             insert into Servings values
                                 ({s.Quantity}, convert(datetime, '{s.BookedDate:dd-MM-yyyy}', 105), @fid, {s.MealId}, {s.UserId})
                         end
-                ";
+                    ";
             }
+        }
+        return await _dbContext.ExecuteNonQueryAsync(query);
+    }
+
+    public async Task<List<Serving>> GetAllPersonalOrders(int uid)
+    {
+        string query =
+            $@"select s.ServingID, s.Quantity, s.BookedDate, s.UserID, m.* from Servings s
+            join Meals m on m.MealID = s.MealID
+            where s.UserID = {uid} and s.BookedDate >= convert(date, sysdatetime())";
+        List<Serving> response = new();
+        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        {
+            while (reader.Read())
+            {
+                response.Add(
+                    new Serving
+                    {
+                        ServingId = Convert.ToInt32(reader["ServingID"]),
+                        Quantity = Convert.ToInt32(reader["Quantity"]),
+                        BookedDate = Convert.ToDateTime(reader["BookedDate"]),
+                        UserId = Convert.ToInt32(reader["UserID"]),
+                        MealId = Convert.ToInt32(reader["MealID"]),
+                        Meal = new()
+                        {
+                            MealId = Convert.ToInt32(reader["MealID"]),
+                            MealName = reader["MealName"].ToString()!,
+                            Time = (TimeSpan)reader["Time"],
+                        },
+                    }
+                );
+            }
+        }
+        return response;
+    }
+
+    public async Task<bool> EditMeal(List<Serving> request)
+    {
+        string query = $@"";
+        foreach (var s in request)
+        {
+            query +=
+                $@"update Servings
+                    set Quantity = {s.Quantity}
+                where ServingID = {s.ServingId}";
         }
         return await _dbContext.ExecuteNonQueryAsync(query);
     }

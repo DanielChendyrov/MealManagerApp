@@ -123,4 +123,14 @@ public class MealManager : IMealManager
         }
         return false;
     }
+
+    public async Task<List<ServingDTO>> GetAllPersonalOrders(int uid)
+    {
+        return Mapper.Map<List<ServingDTO>>(await MealDAO.GetAllPersonalOrders(uid));
+    }
+
+    public async Task<bool> EditMeal(List<ServingDTO> request)
+    {
+        return await MealDAO.EditMeal(Mapper.Map<List<Serving>>(request));
+    }
 }

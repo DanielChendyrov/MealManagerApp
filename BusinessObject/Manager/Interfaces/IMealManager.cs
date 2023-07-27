@@ -13,4 +13,6 @@ public interface IMealManager
     Task<bool> RegisterPersonalMeal(FormDTO request);
     Task<bool> RegisterDepartmentMeal(FormDTO request);
     Task<List<MealDTO>> GettAllMeals();
+    Task<List<ServingDTO>> GetAllPersonalOrders(int uid);
+    Task<bool> EditMeal(List<ServingDTO> request);
 }

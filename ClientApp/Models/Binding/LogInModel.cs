@@ -1,4 +1,4 @@
-﻿namespace ClientApp.Models.Request;
+﻿namespace ClientApp.Models.Binding;
 
 public class LogInModel
 {
