@@ -1,9 +1,8 @@
 ﻿namespace ClientApp.Models.Transfer;
 
-public class CompanyMonthlyStatsModel
+public class PersonalMonthlyStats
 {
     public int UserID { get; set; }
-    public UserModel? User { get; set; }
+    public DateTime BookedDate { get; set; }
     public List<CustomMealStatsModel> MealStats { get; set; } = new();
-    public int Total { get; set; }
 }

@@ -1,8 +1,9 @@
-﻿@{
+﻿@using ClientApp.Models.Binding;
+@{
     ViewData["Title"] = "Thống kê cá nhân";
 }
 
-@model dynamic
+@model PersonalStatsModel
 
 @{
     int? userID = Context.Session.GetInt32("UserID");

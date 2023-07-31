@@ -1,4 +1,5 @@
-﻿using ClientApp.Models.Transfer;
+﻿using ClientApp.Models.Binding;
+using ClientApp.Models.Transfer;
 using ClientApp.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Dynamic;
@@ -22,7 +23,7 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
+        PersonalStatsModel models = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -35,15 +36,15 @@ public class StatisticsController : Controller
         if (mealGet.IsSuccessStatusCode && statisticsGet.IsSuccessStatusCode)
         {
             var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            models.Meals = mealList;
+            models.Meals = mealList!;
             if (statisticsGet.ReasonPhrase != "No Content")
             {
                 var statList = await statisticsGet.Content.ReadFromJsonAsync<
-                    List<PersonalMonthlyStatsModel>
+                    List<PersonalMonthlyStats>
                 >();
                 if (mealList != null && mealList.Count > 0)
                 {
-                    models.Statistics = statList;
+                    models.Statistics = statList!;
                     models.Totals = new List<int>();
                     foreach (var m in mealList)
                     {
@@ -77,9 +78,9 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
-        models.CurrentDate = DateTime.Now.ToString("yyyy-MM");
-        models.Statistics = new List<CompanyMonthlyStatsModel>();
+        CompanyMonthlyStatsModel models = new();
+        models.ChosenDate = DateTime.Now.ToString("yyyy-MM");
+        models.Statistics = new List<CompanyMonthlyStats>();
         models.Meals = new List<MealModel>();
         models.Departments = new List<DepartmentModel>();
         return View(models);
@@ -111,7 +112,7 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
+        CompanyMonthlyStatsModel models = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -130,14 +131,14 @@ public class StatisticsController : Controller
         {
             models.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
             models.Departments = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-            models.Statistics = new List<CompanyMonthlyStatsModel>();
+            models.Statistics = new List<CompanyMonthlyStats>();
             if (statisticsGet.ReasonPhrase != "No Content")
             {
                 models.Statistics = await statisticsGet.Content.ReadFromJsonAsync<
-                    List<CompanyMonthlyStatsModel>
+                    List<CompanyMonthlyStats>
                 >();
             }
-            models.CurrentDate = Convert.ToDateTime(collection["FilterMonth"]).ToString("yyyy-MM");
+            models.ChosenDate = Convert.ToDateTime(collection["FilterMonth"]).ToString("yyyy-MM");
         }
         return View("CompanyMonthly", models);
     }

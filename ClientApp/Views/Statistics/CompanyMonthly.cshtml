@@ -1,8 +1,9 @@
-﻿@{
+﻿@using ClientApp.Models.Binding;
+@{
     ViewData["Title"] = "Thống kê đơn vị";
 }
 
-@model dynamic
+@model CompanyMonthlyStatsModel
 
 <div class="row justify-content-center">
     <div class="col-9 col-md-9 col-lg-6 mt-5">
@@ -76,7 +77,7 @@
     @section scripts {
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function () {
-            currentDate = "@Model.CurrentDate";
+            currentDate = "@Model.ChosenDate";
             document.getElementById("filterMonth").value = currentDate.slice(0, 10);
         });
     </script>
