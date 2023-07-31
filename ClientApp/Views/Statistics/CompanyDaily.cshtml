@@ -1,8 +1,9 @@
-﻿@{
+﻿@using ClientApp.Models.Binding;
+@{
     ViewData["Title"] = "Thống kê đơn vị";
 }
 
-@model dynamic
+@model CompanyDailyStatsModel
 
 <div class="row justify-content-center">
     <div class="col-9 col-md-9 col-lg-6 mt-5">
@@ -24,43 +25,48 @@
             {
                 foreach (var m in Model.Statistics)
                 {
-                    <p class="mb-3">@m.MealName: Tổng @m.Total suất</p>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Stt</th>
-                                <th scope="col">Họ tên người đăng ký</th>
-                                <th scope="col">Số lượng</th>
-                                <th scope="col">Thành tiền</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                int i = 1;
-                            }
-
-                            @foreach (var d in Model.Departments)
-                            {
+                    <div class="mb-5">
+                        <p class="mb-2">@m.MealName: Tổng @m.Total suất</p>
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td colspan="4">@d.DepName</td>
+                                    <th scope="col">Stt</th>
+                                    <th scope="col">Họ tên người đăng ký</th>
+                                    <th scope="col">Số lượng</th>
+                                    <th scope="col">Thành tiền</th>
                                 </tr>
-                                if (m.Servings.Count > 0)
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 1;
+                                }
+
+                                @foreach (var d in Model.Departments)
                                 {
-                                    foreach (var s in m.Servings)
+                                    <tr>
+                                        <td colspan="4">@d.DepName</td>
+                                    </tr>
+                                    if (m.Servings.Count > 0)
                                     {
-                                        if (s.User.DepID == d.DepID)
+                                        foreach (var s in m.Servings)
                                         {
-                                            <tr>
-                                                <th scope="row">@i</th>
-                                                <td></td>
-                                            </tr>
-                                            i++;
+                                            if (s.User.DepID == d.DepID)
+                                            {
+                                                <tr>
+                                                    <th scope="row">@i</th>
+                                                    <td>@s.User.FullName</td>
+                                                    <td>@s.Quantity</td>
+                                                    <td>@(s.Quantity * 15000)</td>
+                                                </tr>
+                                                i++;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                    
                 }
             }
         }
@@ -72,7 +78,7 @@
     @section scripts {
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function () {
-            currentDate = "@Model.CurrentDate";
+            currentDate = "@Model.ChosenDate";
             document.getElementById("filterDate").value = currentDate.slice(0, 10);
         });
     </script>

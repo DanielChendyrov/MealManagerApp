@@ -44,9 +44,12 @@ public class AuthenticateController : Controller
             && sysRoleGet.IsSuccessStatusCode
         )
         {
-            model.Departments = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-            model.CompRoles = await compRoleGet.Content.ReadFromJsonAsync<List<CompRoleModel>>();
-            model.SysRoles = await sysRoleGet.Content.ReadFromJsonAsync<List<SysRoleModel>>();
+            var depList = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+            model.Departments = depList!;
+            var compRoleList = await compRoleGet.Content.ReadFromJsonAsync<List<CompRoleModel>>();
+            model.CompRoles = compRoleList!;
+            var sysRoleList = await sysRoleGet.Content.ReadFromJsonAsync<List<SysRoleModel>>();
+            model.SysRoles = sysRoleList!;
             if (model.Departments != null && model.CompRoles != null && model.SysRoles != null)
             {
                 return View(model);

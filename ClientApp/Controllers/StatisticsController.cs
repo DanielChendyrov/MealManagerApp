@@ -2,7 +2,6 @@
 using ClientApp.Models.Transfer;
 using ClientApp.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System.Dynamic;
 
 namespace ClientApp.Controllers;
 
@@ -23,7 +22,7 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        PersonalStatsModel models = new();
+        PersonalStatsModel model = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -36,7 +35,7 @@ public class StatisticsController : Controller
         if (mealGet.IsSuccessStatusCode && statisticsGet.IsSuccessStatusCode)
         {
             var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            models.Meals = mealList!;
+            model.Meals = mealList!;
             if (statisticsGet.ReasonPhrase != "No Content")
             {
                 var statList = await statisticsGet.Content.ReadFromJsonAsync<
@@ -44,11 +43,11 @@ public class StatisticsController : Controller
                 >();
                 if (mealList != null && mealList.Count > 0)
                 {
-                    models.Statistics = statList!;
-                    models.Totals = new List<int>();
+                    model.Statistics = statList!;
+                    model.Totals = new List<int>();
                     foreach (var m in mealList)
                     {
-                        models.Totals.Add(
+                        model.Totals.Add(
                             statList!
                                 .Select(
                                     s =>
@@ -62,7 +61,7 @@ public class StatisticsController : Controller
                     }
                 }
             }
-            return View(models);
+            return View(model);
         }
         ViewData["Error"] =
             "Đang có lỗi xảy ra với kết nối tới máy chủ, xin hãy làm mới trang web hoặc quay lại lúc khác.";
@@ -78,12 +77,11 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        CompanyMonthlyStatsModel models = new();
-        models.ChosenDate = DateTime.Now.ToString("yyyy-MM");
-        models.Statistics = new List<CompanyMonthlyStats>();
-        models.Meals = new List<MealModel>();
-        models.Departments = new List<DepartmentModel>();
-        return View(models);
+        CompanyMonthlyStatsModel model = new()
+        {
+            ChosenDate = DateTime.Now.ToString("yyyy-MM"),
+        };
+        return View(model);
     }
 
     public IActionResult CompanyDaily()
@@ -95,12 +93,11 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
-        models.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd");
-        models.Meals = new List<MealModel>();
-        models.Departments = new List<DepartmentModel>();
-        models.Statistics = new List<ServingModel>();
-        return View(models);
+        CompanyDailyStatsModel model = new()
+        {
+            ChosenDate = DateTime.Now.ToString("yyyy-MM-dd"),
+        };
+        return View(model);
     }
 
     public async Task<IActionResult> FilterByMonth(IFormCollection collection)
@@ -112,7 +109,7 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        CompanyMonthlyStatsModel models = new();
+        CompanyMonthlyStatsModel model = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -129,18 +126,20 @@ public class StatisticsController : Controller
             && statisticsGet.IsSuccessStatusCode
         )
         {
-            models.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            models.Departments = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-            models.Statistics = new List<CompanyMonthlyStats>();
+            var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            model.Meals = mealList!;
+            var depList = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+            model.Departments = depList!;
             if (statisticsGet.ReasonPhrase != "No Content")
             {
-                models.Statistics = await statisticsGet.Content.ReadFromJsonAsync<
+                var statList = await statisticsGet.Content.ReadFromJsonAsync<
                     List<CompanyMonthlyStats>
                 >();
+                model.Statistics = statList!;
             }
-            models.ChosenDate = Convert.ToDateTime(collection["FilterMonth"]).ToString("yyyy-MM");
+            model.ChosenDate = Convert.ToDateTime(collection["FilterMonth"]).ToString("yyyy-MM");
         }
-        return View("CompanyMonthly", models);
+        return View("CompanyMonthly", model);
     }
 
     public async Task<IActionResult> FilterByDate(IFormCollection collection)
@@ -152,7 +151,7 @@ public class StatisticsController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
+        CompanyDailyStatsModel model = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -170,19 +169,19 @@ public class StatisticsController : Controller
         )
         {
             var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            models.Meals = mealList;
-            models.Departments = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-            models.Statistics = new List<CompanyDailyStatsModel>();
+            model.Meals = mealList!;
+            var depList = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+            model.Departments = depList!;
             if (statisticsGet.ReasonPhrase != "No Content")
             {
                 var statList = await statisticsGet.Content.ReadFromJsonAsync<List<ServingModel>>();
                 if (mealList != null)
                 {
-                    var statModel = new List<CompanyDailyStatsModel>();
+                    var statModel = new List<CompanyDailyStats>();
                     foreach (var m in mealList)
                     {
                         statModel.Add(
-                            new CompanyDailyStatsModel()
+                            new CompanyDailyStats()
                             {
                                 MealID = m.MealID,
                                 MealName = m.MealName,
@@ -194,13 +193,13 @@ public class StatisticsController : Controller
                             }
                         );
                     }
-                    models.Statistics = statModel;
+                    model.Statistics = statModel;
                 }
             }
-            models.CurrentDate = Convert
+            model.ChosenDate = Convert
                 .ToDateTime(collection["FilterDate"])
                 .ToString("yyyy-MM-dd");
         }
-        return View("CompanyDaily", models);
+        return View("CompanyDaily", model);
     }
 }

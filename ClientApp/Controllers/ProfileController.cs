@@ -1,7 +1,7 @@
-﻿using ClientApp.Models.Transfer;
+﻿using ClientApp.Models.Binding;
+using ClientApp.Models.Transfer;
 using ClientApp.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System.Dynamic;
 
 namespace ClientApp.Controllers;
 
@@ -89,7 +89,7 @@ public class ProfileController : Controller
             return Redirect("/Home");
         }
 
-        dynamic models = new ExpandoObject();
+        List<CustomOrderModel> models = new();
         var servingGet = await RequestHandler.GetAsync(
             "Meal/GetAllPersonalOrders/" + userID,
             HttpContext.Session.GetString("Jwt")!
@@ -101,16 +101,15 @@ public class ProfileController : Controller
 
         if (servingGet.IsSuccessStatusCode && mealGet.IsSuccessStatusCode)
         {
-            var mealModel = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            models.Meals = mealModel;
-            var orderModel = new List<CustomOrderModel>();
+            var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            var orderList = new List<CustomOrderModel>();
             if (servingGet.ReasonPhrase != "No Content")
             {
                 var servingList = await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>();
                 var dateList = servingList!.Select(s => s.BookedDate).Distinct().ToList();
                 foreach (var date in dateList)
                 {
-                    orderModel.Add(
+                    orderList.Add(
                         new()
                         {
                             BookedDate = date,
@@ -118,11 +117,12 @@ public class ProfileController : Controller
                                 .Where(s => s.BookedDate == date)
                                 .OrderBy(s => s.MealID)
                                 .ToList(),
+                            Meals = mealList!,
                         }
                     );
                 }
             }
-            models.Orders = orderModel;
+            models = orderList;
             return View(models);
         }
         return View();

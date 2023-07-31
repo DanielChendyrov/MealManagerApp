@@ -1,6 +1,6 @@
 ﻿namespace ClientApp.Models.Transfer;
 
-public class CompanyDailyStatsModel
+public class CompanyDailyStats
 {
     public int MealID { get; set; }
     public string? MealName { get; set; }

@@ -35,7 +35,8 @@ public class FormController : Controller
 
         if (mealGet.IsSuccessStatusCode && servingGet.IsSuccessStatusCode)
         {
-            model.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            model.Meals = mealList!;
             model.Servings = new List<ServingModel>();
             if (servingGet.ReasonPhrase != "No Content")
             {
@@ -60,7 +61,7 @@ public class FormController : Controller
             return Redirect("/Home");
         }
 
-        FormModel models = new();
+        FormModel model = new();
         var mealGet = await RequestHandler.GetAsync(
             "Meal/GetAllMeals",
             HttpContext.Session.GetString("Jwt")!
@@ -81,15 +82,18 @@ public class FormController : Controller
             && userGet.IsSuccessStatusCode
         )
         {
-            models.Meals = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            models.Servings = new List<ServingModel>();
+            var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+            model.Meals = mealList!;
+            model.Servings = new List<ServingModel>();
             if (servingGet.ReasonPhrase != "No Content")
             {
-                models.Servings = await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>();
+                var servingList = await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>();
+                model.Servings = servingList!;
             }
-            models.Users = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
-            models.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            return View(models);
+            var userList = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
+            model.Users = userList!;
+            model.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            return View(model);
         }
         ViewData["Error"] =
             "Đang có lỗi xảy ra với kết nối tới máy chủ, xin hãy làm mới trang web hoặc quay lại lúc khác.";
@@ -140,7 +144,7 @@ public class FormController : Controller
 
             if (ModelState.IsValid)
             {
-                foreach(var s in model.Servings)
+                foreach (var s in model.Servings)
                 {
                     s.BookedDate = Convert.ToDateTime(model.BookedDate).Add(s.Meal!.Time);
                 }
