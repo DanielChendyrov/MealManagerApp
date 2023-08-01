@@ -1,8 +1,9 @@
-﻿@{
+﻿@using ClientApp.Models.Transfer;
+@{
     ViewData["Title"] = "Hồ sơ cá nhân";
 }
 
-@model ClientApp.Models.Transfer.UserModel
+@model UserModel
 
 @{
     int? userID = Context.Session.GetInt32("UserID");

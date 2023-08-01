@@ -89,7 +89,7 @@ public class ProfileController : Controller
             return Redirect("/Home");
         }
 
-        List<CustomOrderModel> models = new();
+        PersonalOrdersModel models = new();
         var servingGet = await RequestHandler.GetAsync(
             "Meal/GetAllPersonalOrders/" + userID,
             HttpContext.Session.GetString("Jwt")!
@@ -102,7 +102,8 @@ public class ProfileController : Controller
         if (servingGet.IsSuccessStatusCode && mealGet.IsSuccessStatusCode)
         {
             var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            var orderList = new List<CustomOrderModel>();
+            models.Meals = mealList!;
+            var orderList = new List<CustomOrder>();
             if (servingGet.ReasonPhrase != "No Content")
             {
                 var servingList = await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>();
@@ -117,12 +118,11 @@ public class ProfileController : Controller
                                 .Where(s => s.BookedDate == date)
                                 .OrderBy(s => s.MealID)
                                 .ToList(),
-                            Meals = mealList!,
                         }
                     );
                 }
             }
-            models = orderList;
+            models.Orders = orderList;
             return View(models);
         }
         return View();
@@ -135,6 +135,9 @@ public class ProfileController : Controller
         {
             return Redirect("/Home");
         }
+
+        List<ServingModel> request = new();
+
 
         return View("ViewOrders");
     }
