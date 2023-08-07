@@ -8,7 +8,7 @@
 <div class="row justify-content-center">
     <div class="col-9 col-md-9 col-lg-6 mt-5">
         <p class="h4">Xem suất ăn đã đặt</p>
-        @if (Model != null)
+        @if (Model != null && Model.Orders.Count > 0)
         {
             <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Profile" asp-action="EditOrders">
                 <table class="table table-borderless">
@@ -33,23 +33,60 @@
                                 int j = 0;
                                 <tr>
                                     <td>@o.BookedDate.ToShortDateString()</td>
-                                    @foreach (var s in o.Servings)
+                                    <input type="hidden"
+                                           class="form-control"
+                                           name="@("Orders[" + i + "].BookedDate")"
+                                           value="@o.BookedDate">
+                                    @if (Model.Meals.Count > 0)
                                     {
-                                        <td>
-                                            <p id="@s.ServingID">@s.Quantity</p>
-                                            <input
-                                                type="hidden"
-                                                class="form-control"
-                                                name="@("Orders[" + i + "].Servings[" + j + "].Quantity")"
-                                                id="@("Quantity" + s.ServingID)"
-                                                disabled
-                                            >
-                                            <div class="d-flex justify-content-start">
-                                                <button type="button" class="btn btn-light far fa-edit" name="EditBtn" id="@("Edit" + s.ServingID)"></button>
-                                                <button type="button" class="btn btn-light far fa-trash-alt" name="DeleteBtn" id="@("Delete" + s.ServingID)"></button>
-                                            </div>
-                                        </td>
-                                        j++;
+                                        foreach (var m in Model.Meals)
+                                        {
+                                            if (o.Servings.Count > 0)
+                                            {
+                                                foreach (var s in o.Servings)
+                                                {
+                                                    if (s.MealID == m.MealID)
+                                                    {
+                                                        <td>
+                                                            <p id="@s.ServingID">@s.Quantity</p>
+                                                            <input type="hidden"
+                                                                   class="form-control quantity"
+                                                                   name="@("Orders[" + i + "].Servings[" + j + "].Quantity")"
+                                                                   id="@("Quantity" + s.ServingID)"
+                                                                   disabled>
+                                                            <input type="hidden"
+                                                                   name="@("Orders[" + i + "].Servings[" + j + "].ServingID")"
+                                                                   id="@("ServingID" + s.ServingID)"
+                                                                   value="@s.ServingID"
+                                                                   disabled>
+                                                            <input type="hidden"
+                                                                   class="timeField"
+                                                                   name="@("Orders[" + i + "].Servings[" + j + "].Meal.Time")"
+                                                                   id="@("Time" + s.ServingID)"
+                                                                   value="@s.Meal!.Time">
+                                                            <div class="d-flex justify-content-start">
+                                                                <button type="button"
+                                                                        class="btn btn-light far fa-edit"
+                                                                        name="EditBtn"
+                                                                        id="@("Edit" + s.ServingID)">
+                                                                </button>
+                                                                <a type="button"
+                                                                   class="btn btn-light far fa-trash-alt"
+                                                                   name="DeleteBtn"
+                                                                   id="@("Delete" + s.ServingID)"
+                                                                   href="@("Delete?servingID=" + s.ServingID)">
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                        j++;
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 </tr>
                                 i++;
@@ -62,6 +99,10 @@
                 </div>
             </form>
         }
+        else
+        {
+            <p>Bạn vẫn chưa đặt suất ăn nào cho các ngày tới.</p>
+        }
     </div>
 </div>
 
@@ -72,13 +113,49 @@
                 var editBtn = event.target;
                 var text = document.getElementById(editBtn.id.substring(4));
                 var quantityInput = document.getElementById("Quantity" + editBtn.id.substring(4));
-                if (quantityInput.disabled === true) {
+                var idInput = document.getElementById("ServingID" + editBtn.id.substring(4));
+                var timeInput = document.getElementById("Time" + editBtn.id.substring(4));
+                if (quantityInput.disabled === true || quantityInput.type === "hidden") {
                     quantityInput.disabled = false;
                     quantityInput.type = "text";
                     quantityInput.value = text.innerHTML;
+                    idInput.disabled = false;
                     text.style.display = "none";
                 }
             }
         });
+
+        document.addEventListener("change", function (event) {
+            if (event.target.className === "form-control quantity") {
+                var quantityInput = event.target;
+                var text = document.getElementById(quantityInput.id.substring(8));
+                quantityInput.value = quantityInput.value.replace(/\s/g, '');
+
+                if (quantityInput.value === "") {
+                    quantityInput.value = text.innerHTML;
+                    alert("Xin hãy xoá suất đặt hoặc điền một số từ 1 đến 99, hoặc không đổi.");
+                }
+                if (!quantityInput.value.match(/^([1-9][0-9]{0,1})$/)) {
+                    quantityInput.value = text.innerHTML;
+                    alert("Xin hãy xoá suất đặt hoặc điền một số từ 1 đến 99, hoặc không đổi.");
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            checkTime();
+        });
+
+        function checkTime() {
+            var timeInputs = document.getElementsByClassName("timeField");
+            for (var t of timeInputs) {
+                var editBtn = document.getElementById("Edit" + t.id.substring(4));
+                var deleteBtn = document.getElementById("Delete" + t.id.substring(4));
+                if (new Date(currentDate).getHours() + 1 <= t.value.slice(0, 2)) {
+                    editBtn.disabled = true;
+                    deleteBtn.disabled = true;
+                }
+            }
+        }
     </script>
 }

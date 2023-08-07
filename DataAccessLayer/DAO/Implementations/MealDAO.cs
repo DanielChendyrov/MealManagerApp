@@ -8,18 +8,18 @@ namespace DataAccessLayer.DAO.Implementations;
 
 public class MealDAO : IMealDAO
 {
-    private readonly DBContext _dbContext;
+    private IDBContext DbContext { get; }
 
-    public MealDAO()
+    public MealDAO(IDBContext dBContext)
     {
-        _dbContext = new();
+        DbContext = dBContext;
     }
 
     public async Task<List<Meal>> GetAllMeals()
     {
         string query = $@"select * from Meals";
         List<Meal> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -46,7 +46,7 @@ public class MealDAO : IMealDAO
 	            and year(s.BookedDate) = year(convert(date, sysdatetime()))
             order by s.BookedDate, m.MealID";
         List<Serving> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -82,7 +82,7 @@ public class MealDAO : IMealDAO
             where cast(s.BookedDate as date) = '{requestDate:yyyy-MM-dd}'
             order by m.MealID, d.DepName, u.FullName";
         List<Serving> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -128,7 +128,7 @@ public class MealDAO : IMealDAO
                 and year(s.BookedDate) = year('{requestDate:yyyy-MM-dd}')
             order by d.DepName, u.FullName, m.MealID";
         List<Serving> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -172,7 +172,7 @@ public class MealDAO : IMealDAO
             join Meals m on m.MealID = s.MealID
             where u.DepID = {depID}";
         List<Serving> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -228,7 +228,7 @@ public class MealDAO : IMealDAO
                     ";
             }
         }
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 
     public async Task<List<Serving>> GetAllPersonalOrders(int uid)
@@ -238,7 +238,7 @@ public class MealDAO : IMealDAO
             join Meals m on m.MealID = s.MealID
             where s.UserID = {uid} and s.BookedDate >= convert(date, sysdatetime())";
         List<Serving> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -271,8 +271,22 @@ public class MealDAO : IMealDAO
             query +=
                 $@"update Servings
                     set Quantity = {s.Quantity}
-                where ServingID = {s.ServingId}";
+                from Servings s, Meals m
+                where s.MealID = m.MealID
+                    and ServingID = {s.ServingId}
+                    and s.BookedDate + convert(datetime, m.[Time]) > sysdatetime()";
         }
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
+    }
+
+    public async Task<bool> DeleteMeal(int servingID)
+    {
+        string query =
+            $@"delete Servings
+            from Servings s join Meals m
+                on s.MealID = m.MealID
+            where s.ServingID = {servingID}
+                and s.BookedDate + convert(datetime, m.[Time]) > sysdatetime()";
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 }

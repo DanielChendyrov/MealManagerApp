@@ -7,18 +7,18 @@ namespace DataAccessLayer.DAO.Implementations;
 
 public class RoleDAO : IRoleDAO
 {
-    private readonly DBContext _dbContext;
+    private IDBContext DbContext { get; }
 
-    public RoleDAO()
+    public RoleDAO(IDBContext dBContext)
     {
-        _dbContext = new();
+        DbContext = dBContext;
     }
 
     public async Task<List<CompanyRole>> GetAllCompanyRoles()
     {
         string query = $@"select * from CompanyRoles";
         List<CompanyRole> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -38,7 +38,7 @@ public class RoleDAO : IRoleDAO
     {
         string query = $@"select * from SystemRoles";
         List<SystemRole> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -72,7 +72,7 @@ public class RoleDAO : IRoleDAO
                             ({(request as SystemRole)!.SysRoleId}, '{(request as SystemRole)!.SysRoleName}')";
             }
         }
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 
     public async Task<bool> EditRole<T>(T request)
@@ -93,6 +93,6 @@ public class RoleDAO : IRoleDAO
                         where SysRoleID = {(request as SystemRole)!.SysRoleId}";
             }
         }
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 }

@@ -8,11 +8,11 @@
 <div class="row justify-content-center">
     <div class="col-9 col-md-9 col-lg-6 mt-5">
         <p class="h4 text-center">Thống kê ăn ca theo ngày cả đơn vị</p>
-        <form class="d-flex flex-column justify-content-center mb-5" method="POST" asp-controller="Statistics" asp-action="FilterByDate">
+        <form class="d-flex flex-column justify-content-center mb-5" method="POST" asp-controller="Statistics" asp-action="CompanyDaily">
             <div class="row mb-3 d-inline-flex justify-content-center">
                 <label for="filterDate" class="col-form-label col-sm-4 col-md-4 col-lg-4 col-xxl-3">Ngày đặt lịch</label>
                 <div class="col-sm-5 col-md-5 col-lg-5 col-xxl-4">
-                    <input type="date" class="form-control" id="filterDate" name="FilterDate">
+                    <input type="date" class="form-control" id="filterDate" name="ChosenDate">
                 </div>
             </div>
             <div class="d-flex justify-content-center">
@@ -50,7 +50,7 @@
                                     {
                                         foreach (var s in m.Servings)
                                         {
-                                            if (s.User.DepID == d.DepID)
+                                            if (s.User!.DepID == d.DepID)
                                             {
                                                 <tr>
                                                     <th scope="row">@i</th>

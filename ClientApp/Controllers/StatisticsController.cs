@@ -68,138 +68,118 @@ public class StatisticsController : Controller
         return View();
     }
 
-    public IActionResult CompanyMonthly()
+    public async Task<IActionResult> CompanyMonthly(CompanyMonthlyStatsModel model)
     {
-        int? userID = HttpContext.Session.GetInt32("UserID");
-        string? sysRole = HttpContext.Session.GetString("SysRole");
-        if (userID == null || userID <= 0 || sysRole != "Admin")
+        try
         {
-            return Redirect("/Home");
-        }
-
-        CompanyMonthlyStatsModel model = new()
-        {
-            ChosenDate = DateTime.Now.ToString("yyyy-MM"),
-        };
-        return View(model);
-    }
-
-    public IActionResult CompanyDaily()
-    {
-        int? userID = HttpContext.Session.GetInt32("UserID");
-        string? sysRole = HttpContext.Session.GetString("SysRole");
-        if (userID == null || userID <= 0 || sysRole != "Admin")
-        {
-            return Redirect("/Home");
-        }
-
-        CompanyDailyStatsModel model = new()
-        {
-            ChosenDate = DateTime.Now.ToString("yyyy-MM-dd"),
-        };
-        return View(model);
-    }
-
-    public async Task<IActionResult> FilterByMonth(IFormCollection collection)
-    {
-        int? userID = HttpContext.Session.GetInt32("UserID");
-        string? sysRole = HttpContext.Session.GetString("SysRole");
-        if (userID == null || userID <= 0 || sysRole != "Admin")
-        {
-            return Redirect("/Home");
-        }
-
-        CompanyMonthlyStatsModel model = new();
-        var mealGet = await RequestHandler.GetAsync(
-            "Meal/GetAllMeals",
-            HttpContext.Session.GetString("Jwt")!
-        );
-        var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
-        var statisticsGet = await RequestHandler.GetAsync(
-            "Meal/GetCompanyMonthlyStats/" + collection["FilterMonth"],
-            HttpContext.Session.GetString("Jwt")!
-        );
-
-        if (
-            mealGet.IsSuccessStatusCode
-            && depGet.IsSuccessStatusCode
-            && statisticsGet.IsSuccessStatusCode
-        )
-        {
-            var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            model.Meals = mealList!;
-            var depList = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-            model.Departments = depList!;
-            if (statisticsGet.ReasonPhrase != "No Content")
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            string? sysRole = HttpContext.Session.GetString("SysRole");
+            if (userID == null || userID <= 0 || sysRole != "Admin")
             {
-                var statList = await statisticsGet.Content.ReadFromJsonAsync<
-                    List<CompanyMonthlyStats>
-                >();
-                model.Statistics = statList!;
+                return Redirect("/Home");
             }
-            model.ChosenDate = Convert.ToDateTime(collection["FilterMonth"]).ToString("yyyy-MM");
-        }
-        return View("CompanyMonthly", model);
-    }
 
-    public async Task<IActionResult> FilterByDate(IFormCollection collection)
-    {
-        int? userID = HttpContext.Session.GetInt32("UserID");
-        string? sysRole = HttpContext.Session.GetString("SysRole");
-        if (userID == null || userID <= 0 || sysRole != "Admin")
-        {
-            return Redirect("/Home");
-        }
+            model.ChosenDate ??= DateTime.Now.ToString("yyyy-MM");
+            var mealGet = await RequestHandler.GetAsync(
+                "Meal/GetAllMeals",
+                HttpContext.Session.GetString("Jwt")!
+            );
+            var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
+            var statisticsGet = await RequestHandler.GetAsync(
+                "Meal/GetCompanyMonthlyStats/" + model.ChosenDate,
+                HttpContext.Session.GetString("Jwt")!
+            );
 
-        CompanyDailyStatsModel model = new();
-        var mealGet = await RequestHandler.GetAsync(
-            "Meal/GetAllMeals",
-            HttpContext.Session.GetString("Jwt")!
-        );
-        var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
-        var statisticsGet = await RequestHandler.GetAsync(
-            "Meal/GetCompanyDailyStats/" + collection["FilterDate"],
-            HttpContext.Session.GetString("Jwt")!
-        );
-
-        if (
-            mealGet.IsSuccessStatusCode
-            && depGet.IsSuccessStatusCode
-            && statisticsGet.IsSuccessStatusCode
-        )
-        {
-            var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
-            model.Meals = mealList!;
-            var depList = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
-            model.Departments = depList!;
-            if (statisticsGet.ReasonPhrase != "No Content")
+            if (
+                mealGet.IsSuccessStatusCode
+                && depGet.IsSuccessStatusCode
+                && statisticsGet.IsSuccessStatusCode
+            )
             {
-                var statList = await statisticsGet.Content.ReadFromJsonAsync<List<ServingModel>>();
-                if (mealList != null)
+                var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+                model.Meals = mealList!;
+                var depList = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+                model.Departments = depList!;
+                if (statisticsGet.ReasonPhrase != "No Content")
                 {
-                    var statModel = new List<CompanyDailyStats>();
-                    foreach (var m in mealList)
-                    {
-                        statModel.Add(
-                            new CompanyDailyStats()
-                            {
-                                MealID = m.MealID,
-                                MealName = m.MealName,
-                                Servings = statList!.Where(s => s.MealID == m.MealID).ToList(),
-                                Total = statList!
-                                    .Where(s => s.MealID == m.MealID)
-                                    .Select(s => s.Quantity)
-                                    .Sum(),
-                            }
-                        );
-                    }
-                    model.Statistics = statModel;
+                    var statList = await statisticsGet.Content.ReadFromJsonAsync<
+                        List<CompanyMonthlyStats>
+                    >();
+                    model.Statistics = statList!;
                 }
             }
-            model.ChosenDate = Convert
-                .ToDateTime(collection["FilterDate"])
-                .ToString("yyyy-MM-dd");
+            return View(model);
         }
-        return View("CompanyDaily", model);
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task<IActionResult> CompanyDaily(CompanyDailyStatsModel model)
+    {
+        try
+        {
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            string? sysRole = HttpContext.Session.GetString("SysRole");
+            if (userID == null || userID <= 0 || sysRole != "Admin")
+            {
+                return Redirect("/Home");
+            }
+
+            model.ChosenDate ??= DateTime.Now.ToString("yyyy-MM-dd");
+            var mealGet = await RequestHandler.GetAsync(
+                "Meal/GetAllMeals",
+                HttpContext.Session.GetString("Jwt")!
+            );
+            var depGet = await RequestHandler.GetAsync("Department/GetAllDeps");
+            var statisticsGet = await RequestHandler.GetAsync(
+                "Meal/GetCompanyDailyStats/" + model.ChosenDate,
+                HttpContext.Session.GetString("Jwt")!
+            );
+
+            if (
+                mealGet.IsSuccessStatusCode
+                && depGet.IsSuccessStatusCode
+                && statisticsGet.IsSuccessStatusCode
+            )
+            {
+                var mealList = await mealGet.Content.ReadFromJsonAsync<List<MealModel>>();
+                model.Meals = mealList!;
+                var depList = await depGet.Content.ReadFromJsonAsync<List<DepartmentModel>>();
+                model.Departments = depList!;
+                if (statisticsGet.ReasonPhrase != "No Content")
+                {
+                    var statList = await statisticsGet.Content.ReadFromJsonAsync<
+                        List<ServingModel>
+                    >();
+                    if (mealList != null)
+                    {
+                        var statModel = new List<CompanyDailyStats>();
+                        foreach (var m in mealList)
+                        {
+                            statModel.Add(
+                                new CompanyDailyStats()
+                                {
+                                    MealID = m.MealID,
+                                    MealName = m.MealName,
+                                    Servings = statList!.Where(s => s.MealID == m.MealID).ToList(),
+                                    Total = statList!
+                                        .Where(s => s.MealID == m.MealID)
+                                        .Select(s => s.Quantity)
+                                        .Sum(),
+                                }
+                            );
+                        }
+                        model.Statistics = statModel;
+                    }
+                }
+            }
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }

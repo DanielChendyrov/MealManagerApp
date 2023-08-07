@@ -2,6 +2,7 @@ using BusinessObject.Manager.Implementations;
 using BusinessObject.Manager.Interfaces;
 using DataAccessLayer.DAO.Implementations;
 using DataAccessLayer.DAO.Interfaces;
+using DataAccessLayer.DBConnection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -75,6 +76,7 @@ builder.Services.AddScoped<IUserDAO, UserDAO>();
 builder.Services.AddScoped<IDepartmentDAO, DepartmentDAO>();
 builder.Services.AddScoped<IRoleDAO, RoleDAO>();
 builder.Services.AddScoped<IMealDAO, MealDAO>();
+builder.Services.AddScoped<IDBContext, DBContext>();
 
 var app = builder.Build();
 

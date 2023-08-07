@@ -7,11 +7,11 @@ namespace DataAccessLayer.DAO.Implementations;
 
 public class UserDAO : IUserDAO
 {
-    private readonly DBContext _dbContext;
+    private IDBContext DbContext { get; }
 
-    public UserDAO()
+    public UserDAO(IDBContext dBContext)
     {
-        _dbContext = new DBContext();
+        DbContext = dBContext;
     }
 
     public async Task<List<User>> GetAllUsers()
@@ -23,7 +23,7 @@ public class UserDAO : IUserDAO
             join CompanyRoles cr on cr.CompRoleID = u.CompRoleID
             join SystemRoles sr on sr.SysRoleID = u.SysRoleID";
         List<User> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -69,7 +69,7 @@ public class UserDAO : IUserDAO
             join SystemRoles sr on sr.SysRoleID = u.SysRoleID
             where u.UserID = {uid}";
         User response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -113,7 +113,7 @@ public class UserDAO : IUserDAO
             join SystemRoles sr on sr.SysRoleID = u.SysRoleID
             where d.DepID = {depId}";
         List<User> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -159,7 +159,7 @@ public class UserDAO : IUserDAO
             join SystemRoles sr on sr.SysRoleID = u.SysRoleID
             where u.Username = '{request.Username}'";
         User response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -205,7 +205,7 @@ public class UserDAO : IUserDAO
                         '{request.Password}', {request.DepId},
                         {request.CompRoleId}, {request.SysRoleId})
                 end";
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 
     public async Task<bool> EditUser(User request)
@@ -215,7 +215,7 @@ public class UserDAO : IUserDAO
                 set FullName = N'{request.FullName}', DepID = {request.DepId},
                     CompRoleID = {request.CompRoleId}, SysRoleID = {request.SysRoleId}
             where UserID = {request.UserId}";
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 
     public async Task<bool> ChangePassword(User request)
@@ -224,6 +224,6 @@ public class UserDAO : IUserDAO
             $@"update Users
                 set Password = '{request.Password}'
             where UserID = {request.UserId}";
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 }

@@ -139,8 +139,8 @@ public class UserController : ControllerBase
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim("UserID", result.UserID.ToString()),
                 new Claim("DepID", result.DepID.ToString()),
-                new Claim("role", result.CompRole.CompRoleName.ToString()),
-                new Claim("role", result.SysRole.SysRoleName.ToString()),
+                new Claim("role", result.CompRole!.CompRoleName!.ToString()),
+                new Claim("role", result.SysRole!.SysRoleName!.ToString()),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]!));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);

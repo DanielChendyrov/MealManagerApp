@@ -1,6 +1,73 @@
-﻿@{
+﻿@using ClientApp.Models.Transfer;
+@{
     ViewData["Title"] = "Quản lý phòng ban";
 }
 
-<h1>DepartmentManager</h1>
+@model List<DepartmentModel>
 
+<div class="row justify-content-center">
+    <div class="col-9 col-md-9 col-lg-6 mt-5">
+        <p class="h4">Quản lý phòng ban</p>
+        @if (Model != null)
+        {
+            <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Admin" asp-action="DepartmentManager">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Stt</th>
+                            <th scope="col">Tên phòng</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count > 0)
+                        {
+                            int i = 1;
+                            foreach (var d in Model)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>
+                                        <p id="@d.DepID">@d.DepName</p>
+                                        <input type="hidden" class="form-control" name="@("DepName[" + i + "]")" id="@("DepName" + d.DepID)" disabled>
+                                        <input type="hidden" class="form-control" name="@("DepID[" + i + "]")" id="@("DepID" + d.DepID)" value="@d.DepID" disabled>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-light far fa-edit" name="EditBtn" id="@("Edit" + d.DepID)"></button>
+                                        <a type="button"
+                                           class="btn btn-light far fa-trash-alt"
+                                           name="DeleteBtn"
+                                           id="@("Delete" + d.DepID)"
+                                           href="@("Delete?depID")">
+                                        </a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </form>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        document.addEventListener("click", function (event) {
+            if (event.target.name === "EditBtn") {
+                var editBtn = event.target;
+                var text = document.getElementById(editBtn.id.substring(4));
+                var nameInput = document.getElementById("DepName" + editBtn.id.substring(4));
+                var idInput = document.getElementById("DepID" + editBtn.id.substring(4));
+                if (nameInput.disabled === true || nameInput.type === "hidden") {
+                    nameInput.disabled = false;
+                    nameInput.type = "text";
+                    nameInput.value = text.innerHTML;
+                    idInput.disabled = false;
+                    text.style.display = "none";
+                }
+            }
+        });
+    </script>
+}

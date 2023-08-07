@@ -133,4 +133,9 @@ public class MealManager : IMealManager
     {
         return await MealDAO.EditMeal(Mapper.Map<List<Serving>>(request));
     }
+
+    public async Task<bool> DeleteMeal(int servingID)
+    {
+        return await MealDAO.DeleteMeal(servingID);
+    }
 }

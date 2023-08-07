@@ -8,18 +8,18 @@ namespace DataAccessLayer.DAO.Implementations;
 
 public class DepartmentDAO : IDepartmentDAO
 {
-    private readonly DBContext _dbContext;
+    private IDBContext DbContext { get; }
 
-    public DepartmentDAO()
+    public DepartmentDAO(IDBContext dBContext)
     {
-        _dbContext = new DBContext();
+        DbContext = dBContext;
     }
 
     public async Task<List<Department>> GetAllDeps()
     {
         string query = $@"select * from Departments";
         List<Department> response = new();
-        using (SqlDataReader reader = await _dbContext.ExecuteQueryAsync(query))
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
         {
             while (reader.Read())
             {
@@ -45,7 +45,7 @@ public class DepartmentDAO : IDepartmentDAO
                 query += $@"insert into Departments values ({dep.DepId}, {dep.DepName})";
             }
         }
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 
     public async Task<bool> EditDep(List<Department> depList)
@@ -61,6 +61,6 @@ public class DepartmentDAO : IDepartmentDAO
                         where DepID = {dep.DepId}";
             }
         }
-        return await _dbContext.ExecuteNonQueryAsync(query);
+        return await DbContext.ExecuteNonQueryAsync(query);
     }
 }

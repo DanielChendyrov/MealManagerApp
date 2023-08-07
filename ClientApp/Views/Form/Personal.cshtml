@@ -44,7 +44,7 @@
                                 <label for="@m.MealID" class="form-check-label">@m.MealName</label>
                             </div>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="@("Quantity" + m.MealID)" name="@("Servings[" + i + "].Quantity")" disabled>
+                                <input type="text" class="form-control quantity" id="@("Quantity" + m.MealID)" name="@("Servings[" + i + "].Quantity")" disabled>
                                 <input type="hidden" id="@("MealID" + m.MealID)" name="@("Servings[" + i + "].MealID")" value="@m.MealID" disabled>
                                 <input type="hidden" id="@("MealTime" + m.MealID)" name="@("Servings[" + i + "].Meal.Time")" value="@m.Time">
                             </div>
@@ -75,7 +75,7 @@
                     toggle(check, check.checked);
                 }
 
-                if (event.target.name === "Quantity") {
+                if (event.target.className === "form-control quantity") {
                     event.target.value = event.target.value.replace(/\s/g, '');
 
                     if (event.target.value === "") {
@@ -115,7 +115,7 @@
                                     "MealID": @s.MealID,
                                     "Meal": {
                                         "MealID": @s.MealID,
-                                        "MealName": "@s.Meal.MealName",
+                                        "MealName": "@s.Meal!.MealName",
                                         "Time": "@s.Meal.Time",
                                     },
                                     "UserID": @s.UserID,

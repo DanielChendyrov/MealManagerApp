@@ -184,4 +184,23 @@ public class MealController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpDelete]
+    [Route("{servingID}")]
+    public async Task<IActionResult> DeleteMeal(int servingID)
+    {
+        try
+        {
+            var result = await MealManager.DeleteMeal(servingID);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }

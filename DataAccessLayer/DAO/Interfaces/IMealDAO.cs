@@ -12,4 +12,5 @@ public interface IMealDAO
     Task<List<Meal>> GetAllMeals();
     Task<List<Serving>> GetAllPersonalOrders(int uid);
     Task<bool> EditMeal(List<Serving> request);
+    Task<bool> DeleteMeal(int servingID);
 }

@@ -62,10 +62,10 @@
                                                     <input type="checkbox" class="form-check-input" id="@("Check" + m.MealID + "User" + u.UserID)" name="toggleCheck">
                                                 </div>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control" id="@("Quantity" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Quantity")" disabled>
-                                                    <input type="hidden" class="form-control" id="@("User" + u.UserID)" name="RegUserID" name="@("Servings[" + i + "].UserID")" value="@u.UserID">
-                                                    <input type="hidden" class="form-control" id="@("MealID" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].MealID")" value="@m.MealID" disabled>
-                                                    <input type="hidden" class="form-control" id="@("MealTime" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Meal.Time")" value="@m.Time">
+                                                    <input type="text" class="form-control quantity" id="@("Quantity" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Quantity")" disabled>
+                                                    <input type="hidden" id="@("User" + u.UserID)" name="RegUserID" name="@("Servings[" + i + "].UserID")" value="@u.UserID">
+                                                    <input type="hidden" id="@("MealID" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].MealID")" value="@m.MealID" disabled>
+                                                    <input type="hidden" id="@("MealTime" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Meal.Time")" value="@m.Time">
                                                 </div>
                                             </div>
                                         </td>
@@ -94,7 +94,7 @@
                     toggle(check, check.checked);
                 }
 
-                if (event.target.name === "Quantity") {
+                if (event.target.className === "form-control quantity") {
                     var quantityInput = event.target;
                     quantityInput.value = quantityInput.value.replace(/\s/g, '');
 
@@ -135,7 +135,7 @@
                                     "MealID": @s.MealID,
                                     "Meal": {
                                         "MealID": @s.MealID,
-                                        "MealName": "@s.Meal.MealName",
+                                        "MealName": "@s.Meal!.MealName",
                                         "Time": "@s.Meal.Time",
                                     },
                                     "UserID": @s.UserID,

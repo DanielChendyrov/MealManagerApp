@@ -3,7 +3,6 @@ using ClientApp.Models.Transfer;
 using ClientApp.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Dynamic;
 
 namespace ClientApp.Controllers;
 

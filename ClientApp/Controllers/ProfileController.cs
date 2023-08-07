@@ -128,17 +128,75 @@ public class ProfileController : Controller
         return View();
     }
 
-    public async Task<IActionResult> EditOrders(IFormCollection collection)
+    public async Task<IActionResult> EditOrders(PersonalOrdersModel model)
     {
-        int? userID = HttpContext.Session.GetInt32("UserID");
-        if (userID == null || userID <= 0)
+        try
         {
-            return Redirect("/Home");
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            if (userID == null || userID <= 0)
+            {
+                return Redirect("/Home");
+            }
+
+            if (ModelState.IsValid)
+            {
+                List<ServingModel> request = new();
+                if (model.Orders.Count > 0)
+                {
+                    foreach (var o in model.Orders)
+                    {
+                        if (o.Servings.Count > 0)
+                        {
+                            foreach (var s in o.Servings)
+                            {
+                                request.Add(
+                                    new()
+                                    {
+                                        ServingID = s.ServingID,
+                                        Quantity = s.Quantity,
+                                        BookedDate = o.BookedDate,
+                                    }
+                                );
+                            }
+                        }
+                    }
+                }
+                var response = await RequestHandler.PutAsync(
+                    "Meal/EditMeal",
+                    request,
+                    HttpContext.Session.GetString("Jwt")!
+                );
+            }
+            return RedirectToAction("ViewOrders");
         }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
 
-        List<ServingModel> request = new();
+    public async Task<IActionResult> Delete(string servingID)
+    {
+        try
+        {
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            if (userID == null || userID <= 0)
+            {
+                return Redirect("/Home");
+            }
 
-
-        return View("ViewOrders");
+            if (servingID != null)
+            {
+                var response = await RequestHandler.DeleteAsync(
+                    "Meal/DeleteMeal/" + servingID,
+                    HttpContext.Session.GetString("Jwt")!
+                );
+            }
+            return RedirectToAction("ViewOrders");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }
