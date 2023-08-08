@@ -1,7 +1,9 @@
-﻿using BusinessObject.DTO;
+﻿using Azure.Core;
+using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
 using BusinessObject.DTO.Response;
 using BusinessObject.Manager.Interfaces;
+using DataAccessLayer.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -158,11 +160,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPut, Authorize]
-    public async Task<IActionResult> EditUser(UserDTO request)
+    public async Task<IActionResult> EditUsers(List<UserDTO> requests)
     {
         try
         {
-            bool result = await UserManager.EditUser(request);
+            bool result = await UserManager.EditUsers(requests);
             if (result)
             {
                 return Ok();
@@ -186,6 +188,25 @@ public class UserController : ControllerBase
                 return Ok();
             }
             return BadRequest("Please re-check input information.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpDelete, Authorize(Roles = "Admin")]
+    [Route("{userID}")]
+    public async Task<IActionResult> DeleteUser(int userID)
+    {
+        try
+        {
+            bool result = await UserManager.DeleteUser(userID);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
         catch (Exception ex)
         {

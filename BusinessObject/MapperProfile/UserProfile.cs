@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
-using BusinessObject.DTO.Response;
 using DataAccessLayer.Domain;
 
 namespace BusinessObject.MapperProfile;
@@ -34,7 +33,8 @@ public class UserProfile : Profile
             .ForMember(des => des.CompRoleID, opt => opt.MapFrom(src => src.CompRoleId))
             .ForMember(des => des.CompRole, opt => opt.MapFrom(src => src.CompRole))
             .ForMember(des => des.SysRoleID, opt => opt.MapFrom(src => src.SysRoleId))
-            .ForMember(des => des.SysRole, opt => opt.MapFrom(src => src.SysRole));
+            .ForMember(des => des.SysRole, opt => opt.MapFrom(src => src.SysRole))
+            .ForMember(des => des.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted));
         CreateMap<UserDTO, User>()
             .ForMember(des => des.UserId, opt => opt.MapFrom(src => src.UserID))
             .ForMember(des => des.Username, opt => opt.MapFrom(src => src.Username))
@@ -44,7 +44,8 @@ public class UserProfile : Profile
             .ForMember(des => des.CompRoleId, opt => opt.MapFrom(src => src.CompRoleID))
             .ForMember(des => des.CompRole, opt => opt.MapFrom(src => src.CompRole))
             .ForMember(des => des.SysRoleId, opt => opt.MapFrom(src => src.SysRoleID))
-            .ForMember(des => des.SysRole, opt => opt.MapFrom(src => src.SysRole));
+            .ForMember(des => des.SysRole, opt => opt.MapFrom(src => src.SysRole))
+            .ForMember(des => des.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted));
 
         CreateMap<ChangePasswordDTO, User>()
             .ForMember(des => des.UserId, opt => opt.MapFrom(src => src.UserID))

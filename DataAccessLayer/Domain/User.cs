@@ -1,4 +1,7 @@
-﻿namespace DataAccessLayer.Domain;
+﻿using System;
+using System.Collections.Generic;
+
+namespace DataAccessLayer.Domain;
 
 public partial class User
 {
@@ -15,6 +18,8 @@ public partial class User
     public int CompRoleId { get; set; }
 
     public int SysRoleId { get; set; }
+
+    public bool IsDeleted { get; set; }
 
     public virtual CompanyRole CompRole { get; set; } = null!;
 

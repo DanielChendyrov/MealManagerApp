@@ -65,17 +65,21 @@
                                                                    id="@("Time" + s.ServingID)"
                                                                    value="@s.Meal!.Time">
                                                             <div class="d-flex justify-content-start">
-                                                                <button type="button"
-                                                                        class="btn btn-light far fa-edit"
-                                                                        name="EditBtn"
-                                                                        id="@("Edit" + s.ServingID)">
-                                                                </button>
-                                                                <a type="button"
-                                                                   class="btn btn-light far fa-trash-alt"
-                                                                   name="DeleteBtn"
-                                                                   id="@("Delete" + s.ServingID)"
-                                                                   href="@("Delete?servingID=" + s.ServingID)">
-                                                                </a>
+                                                                <div>
+                                                                    <button type="button"
+                                                                            class="btn btn-light far fa-edit"
+                                                                            name="EditBtn"
+                                                                            id="@("Edit" + s.ServingID)">
+                                                                    </button>
+                                                                </div>
+                                                                <div>
+                                                                    <a type="button"
+                                                                       class="btn btn-light far fa-trash-alt"
+                                                                       name="DeleteBtn"
+                                                                       id="@("Delete" + s.ServingID)"
+                                                                       href="@("DeleteOrder?servingID=" + s.ServingID)">
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </td>
                                                         j++;

@@ -1,15 +1,28 @@
-﻿@using ClientApp.Models.Transfer;
+﻿@using ClientApp.Models.Binding;
 @{
     ViewData["Title"] = "Quản lý người dùng";
 }
 
-@model List<UserModel>
+@model UserManagerModel
 
 <div class="row justify-content-center">
     <div class="col-9 col-md-9 col-lg-6 mt-5">
         <p class="h4">Quản lý người dùng</p>
-        <form class="d-flex flex-column justify-content-center" method="POST" asp-controller="Admin" asp-action="UserManager">
-            
+        <form class="d-flex flex-column justify-content-center mb-5" method="POST" asp-controller="Admin" asp-action="UserManager">
+            <div class="form-group mt-3 d-flex justify-content-start">
+                <label class="" for="sortingOrder">Thứ tự sắp xếp</label>
+                <select class="form-select" id="sortingOrder" name="SortOrder">
+                    @foreach (var s in Model.SortOrders)
+                    {
+                        <option value="@s.Value">@s.Key</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group mt-2 d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary">Sắp xếp</button>
+            </div>
+        </form>
+        <form class="d-flex flex-column justify-content-center mb-5" method="POST" asp-controller="Admin" asp-action="EditUsers">
             <table class="table">
                 <thead>
                     <tr>
@@ -18,26 +31,112 @@
                         <th scope="col">Phòng ban</th>
                         <th scope="col">Quyền đăng ký</th>
                         <th scope="col">Quyền hệ thống</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model.Count > 0)
+                    @if (Model.Users.Count > 0)
                     {
                         int i = 1;
-                        foreach (var u in Model)
+                        foreach (var u in Model.Users)
                         {
                             <tr>
                                 <th scope="row">@i</th>
-                                <td>@u.FullName</td>
-                                <td>@u.Dep!.DepName</td>
-                                <td>@u.CompRole!.CompRoleName</td>
-                                <td>@u.SysRole!.SysRoleName</td>
+                                <td>
+                                    <p>@u.FullName</p>
+                                    <input type="hidden" id="@("UserID" + u.UserID)" name="@("Users[" + u.UserID + "].UserID")" value="@u.UserID" disabled>
+                                </td>
+                                <td>
+                                    <p class="@("displayText" + u.UserID)">@u.Dep!.DepName</p>
+                                    <select class="@("form-select select" + u.UserID)" name="@("Users[" + u.UserID + "].DepID")" style="display:none" disabled>
+                                        @foreach (var d in Model.Departments)
+                                        {
+                                            <option value="@d.DepID">@d.DepName</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <p class="@("displayText" + u.UserID)">@u.CompRole!.CompRoleName</p>
+                                    <select class="@("form-select select" + u.UserID)" name="@("Users[" + u.UserID + "].CompRoleID")" style="display:none" disabled>
+                                        @foreach (var c in Model.CompRoles)
+                                        {
+                                            <option value="@c.CompRoleID">@c.CompRoleName</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <p class="@("displayText" + u.UserID)">@u.SysRole!.SysRoleName</p>
+                                    <select class="@("form-select select" + u.UserID)" name="@("Users[" + u.UserID + "].SysRoleID")" style="display:none" disabled>
+                                        @foreach (var s in Model.SysRoles)
+                                        {
+                                            <option value="@s.SysRoleID">@s.SysRoleName</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-start">
+                                        <button type="button"
+                                                class="btn btn-light far fa-edit"
+                                                name="EditBtn"
+                                                id="@("Edit" + u.UserID)">
+                                        </button>
+                                        <a type="button"
+                                           class="btn btn-light far fa-trash-alt"
+                                           name="DeleteBtn"
+                                           id="@("Delete" + u.UserID)"
+                                           href="@("DeleteUser?uid=" + u.UserID)">
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>
                             i++;
                         }
                     }
                 </tbody>
             </table>
+            <div class="form-group mt-2 d-flex justify-content-center">
+                <div class="me-2">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+                <div>
+                    <button type="button" id="cancelBtn" class="btn btn-danger" disabled>Huỷ</button>
+                </div>
+            </div>
         </form>
     </div>
 </div>
+
+@section scripts {
+    <script type="text/javascript">
+        document.addEventListener("click", function (event) {
+            if (event.target.name === "EditBtn") {
+                var editBtn = event.target;
+                var idInput = document.getElementById("UserID" + editBtn.id.substring(4));
+                var selects = document.getElementsByClassName("form-select select" + editBtn.id.substring(4));
+                var displays = document.getElementsByClassName("displayText" + editBtn.id.substring(4));
+                var cancelBtn = document.getElementById("cancelBtn");
+
+                for (var s of selects) {
+                    s.disabled = false;
+                    s.style.display = "block";
+                }
+                for (var d of displays) {
+                    d.style.display = "none";
+                }
+                idInput.disabled = false;
+                cancelBtn.disabled = false;
+            }
+
+            if (event.target.id === "cancelBtn") {
+                if (event.target.disabled == false) {
+                    location.reload();
+                }
+
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("sortingOrder").value = "@Model.SortOrder";
+        });
+    </script>
+}

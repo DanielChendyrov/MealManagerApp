@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" />
+    <Compile Remove="wwwroot\lib\font-awesome\**" />
+    <Content Remove="wwwroot\lib\font-awesome\**" />
+    <EmbeddedResource Remove="wwwroot\lib\font-awesome\**" />
+    <None Remove="wwwroot\lib\font-awesome\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\lib\font-awesome\" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.15" />
   </ItemGroup>
 
 </Project>

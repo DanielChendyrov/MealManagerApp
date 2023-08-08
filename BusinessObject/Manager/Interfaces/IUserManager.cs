@@ -12,6 +12,7 @@ namespace BusinessObject.Manager.Interfaces
         Task<UserDTO> LogIn(LogInDTO request);
         Task<UserDTO> SignUp(SignUpDTO request);
         Task<bool> ChangePassword(ChangePasswordDTO request);
-        Task<bool> EditUser(UserDTO request);
+        Task<bool> EditUsers(List<UserDTO> requests);
+        Task<bool> DeleteUser(int userID);
     }
 }

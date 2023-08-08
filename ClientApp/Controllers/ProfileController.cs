@@ -175,7 +175,7 @@ public class ProfileController : Controller
         }
     }
 
-    public async Task<IActionResult> Delete(string servingID)
+    public async Task<IActionResult> DeleteOrder(string servingID)
     {
         try
         {

@@ -62,9 +62,9 @@ public class UserManager : IUserManager
         return new();
     }
 
-    public async Task<bool> EditUser(UserDTO request)
+    public async Task<bool> EditUsers(List<UserDTO> requests)
     {
-        return await UserDAO.EditUser(Mapper.Map<User>(request));
+        return await UserDAO.EditUsers(Mapper.Map<List<User>>(requests));
     }
 
     public async Task<bool> ChangePassword(ChangePasswordDTO request)
@@ -76,5 +76,10 @@ public class UserManager : IUserManager
             return await UserDAO.ChangePassword(Mapper.Map<User>(request));
         }
         return false;
+    }
+
+    public async Task<bool> DeleteUser(int userID)
+    {
+        return await UserDAO.DeleteUser(userID);
     }
 }

@@ -11,5 +11,6 @@ public class UserDTO
     public virtual CompanyRoleDTO? CompRole { get; set; }
     public int SysRoleID { get; set; }
     public virtual SystemRoleDTO? SysRole { get; set; }
+    public bool IsDeleted { get; set; }
     public string? Jwt { get; set; }
 }
