@@ -1,4 +1,4 @@
-﻿namespace BusinessObject.DTO.Request;
+﻿namespace BusinessObject.DTO;
 
 public class ServingDTO
 {

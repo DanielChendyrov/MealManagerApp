@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 
 namespace DataAccessLayer.DBConnection;
 
-public class DBContext :IDBContext
+public class DBContext : IDBContext
 {
     private readonly string connectionString;
 

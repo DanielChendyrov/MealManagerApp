@@ -1,5 +1,4 @@
 ﻿using BusinessObject.DTO;
-using DataAccessLayer.Domain;
 
 namespace BusinessObject.Manager.Interfaces;
 

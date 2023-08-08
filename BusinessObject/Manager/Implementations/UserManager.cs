@@ -2,7 +2,7 @@
 using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
 using BusinessObject.Manager.Interfaces;
-using ClientApp.Utils.Implementations;
+using BusinessObject.Utils;
 using DataAccessLayer.DAO.Interfaces;
 using DataAccessLayer.Domain;
 

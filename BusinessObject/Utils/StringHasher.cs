@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace ClientApp.Utils.Implementations;
+namespace BusinessObject.Utils;
 
 public class StringHasher
 {
@@ -119,6 +119,6 @@ public class StringHasher
 
         // If the computed hash matches the specified hash,
         // the plain text value must be correct.
-        return (hashValue == expectedHashString);
+        return hashValue == expectedHashString;
     }
 }

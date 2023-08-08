@@ -1,6 +1,5 @@
 ﻿using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
-using BusinessObject.DTO.Response;
 
 namespace BusinessObject.Manager.Interfaces
 {

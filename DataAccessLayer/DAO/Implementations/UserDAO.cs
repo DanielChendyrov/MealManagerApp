@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using DataAccessLayer.DAO.Interfaces;
+﻿using DataAccessLayer.DAO.Interfaces;
 using DataAccessLayer.DBConnection;
 using DataAccessLayer.Domain;
 using System.Data.SqlClient;

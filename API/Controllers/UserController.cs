@@ -1,9 +1,6 @@
-﻿using Azure.Core;
-using BusinessObject.DTO;
+﻿using BusinessObject.DTO;
 using BusinessObject.DTO.Request;
-using BusinessObject.DTO.Response;
 using BusinessObject.Manager.Interfaces;
-using DataAccessLayer.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
