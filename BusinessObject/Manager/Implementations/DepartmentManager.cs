@@ -17,18 +17,23 @@ public class DepartmentManager : IDepartmentManager
         Mapper = mapper;
     }
 
+    public async Task<List<DepartmentDTO>> GetAllDeps()
+    {
+        return Mapper.Map<List<DepartmentDTO>>(await DepartmentDAO.GetAllDeps());
+    }
+
     public async Task<bool> CreateNewDep(List<DepartmentDTO> request)
     {
         return await DepartmentDAO.CreateNewDep(Mapper.Map<List<Department>>(request));
     }
 
-    public async Task<bool> EditDep(List<DepartmentDTO> depList)
+    public async Task<bool> EditDep(List<DepartmentDTO> request)
     {
-        return await DepartmentDAO.EditDep(Mapper.Map<List<Department>>(depList));
+        return await DepartmentDAO.EditDep(Mapper.Map<List<Department>>(request));
     }
 
-    public async Task<List<DepartmentDTO>> GetAllDeps()
+    public async Task<bool> DeleteDep(int depID)
     {
-        return Mapper.Map<List<DepartmentDTO>>(await DepartmentDAO.GetAllDeps());
+        return await DepartmentDAO.DeleteDep(depID);
     }
 }

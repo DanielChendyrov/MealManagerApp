@@ -74,7 +74,10 @@ public class AdminController : Controller
 
             if (ModelState.IsValid)
             {
-
+                var response = await RequestHandler.DeleteAsync(
+                    "Department/DeleteDep/" + depID,
+                    HttpContext.Session.GetString("Jwt")!
+                );
             }
             return RedirectToAction("DepartmentManager");
         }

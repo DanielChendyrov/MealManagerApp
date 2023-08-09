@@ -47,6 +47,14 @@
                         }
                     </tbody>
                 </table>
+                <div class="form-group mt-2 d-flex justify-content-center">
+                    <div class="me-2">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                    <div>
+                        <button type="button" id="cancelBtn" class="btn btn-danger" disabled>Huỷ</button>
+                    </div>
+                </div>
             </form>
         }
     </div>
@@ -60,12 +68,21 @@
                 var text = document.getElementById(editBtn.id.substring(4));
                 var nameInput = document.getElementById("DepName" + editBtn.id.substring(4));
                 var idInput = document.getElementById("DepID" + editBtn.id.substring(4));
+                var cancelBtn = document.getElementById("cancelBtn");
+
                 if (nameInput.disabled === true || nameInput.type === "hidden") {
                     nameInput.disabled = false;
                     nameInput.type = "text";
                     nameInput.value = text.innerHTML;
                     idInput.disabled = false;
                     text.style.display = "none";
+                    cancelBtn.disabled = false;
+                }
+            }
+
+            if (event.target.id === "cancelBtn") {
+                if (event.target.disabled == false) {
+                    location.reload();
                 }
             }
         });

@@ -63,4 +63,12 @@ public class DepartmentDAO : IDepartmentDAO
         }
         return await DbContext.ExecuteNonQueryAsync(query);
     }
+
+    public async Task<bool> DeleteDep(int depID)
+    {
+        string query =
+            $@"delete from Departments
+            where DepID = {depID}";
+        return await DbContext.ExecuteNonQueryAsync(query);
+    }
 }

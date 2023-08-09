@@ -70,4 +70,23 @@ public class DepartmentController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpDelete]
+    [Route("{depID}")]
+    public async Task<IActionResult> DeleteDep(int depID)
+    {
+        try
+        {
+            var result = await DepartmentManager.DeleteDep(depID);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
 }
