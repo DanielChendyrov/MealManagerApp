@@ -44,7 +44,6 @@ public class FormController : Controller
                     .Where(s => s.UserID == userID)
                     .ToList();
             }
-            model.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             return View(model);
         }
         ViewData["Error"] =
@@ -92,7 +91,6 @@ public class FormController : Controller
             }
             var userList = await userGet.Content.ReadFromJsonAsync<List<UserModel>>();
             model.Users = userList!;
-            model.CurrentDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             return View(model);
         }
         ViewData["Error"] =

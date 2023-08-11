@@ -16,4 +16,5 @@ public interface IMealManager
     Task<List<ServingDTO>> GetAllPersonalOrders(int uid);
     Task<bool> EditMeal(List<ServingDTO> request);
     Task<bool> DeleteMeal(int servingID);
+    Task<bool> EditMeal3rdShift(List<ServingDTO> request);
 }

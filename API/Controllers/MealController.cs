@@ -186,6 +186,25 @@ public class MealController : ControllerBase
         }
     }
 
+    //Still needs improvements
+    [HttpPut]
+    public async Task<IActionResult> EditMeal3rdShift(List<ServingDTO> request)
+    {
+        try
+        {
+            var result = await MealManager.EditMeal3rdShift(request);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
     [HttpDelete]
     [Route("{servingID}")]
     public async Task<IActionResult> DeleteMeal(int servingID)

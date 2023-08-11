@@ -199,4 +199,16 @@ public class ProfileController : Controller
             throw new Exception(ex.Message);
         }
     }
+
+    public async Task<IActionResult> Manage3rdShift()
+    {
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        string? compRole = HttpContext.Session.GetString("CompRole");
+        if (userID == null || userID <= 0 || compRole != "Tập thể")
+        {
+            return Redirect("/Home");
+        }
+
+        return View();
+    }
 }

@@ -68,8 +68,8 @@ public class MealManager : IMealManager
         var dtoList = Mapper.Map<List<ServingDTO>>(
             await MealDAO.GetCompanyMonthlyStats(requestDate)
         );
-        var userList = dtoList.Select(s => s.User).DistinctBy(u => u.UserID).ToList();
-        var mealList = dtoList.Select(s => s.Meal).DistinctBy(m => m.MealID).ToList();
+        var userList = dtoList.Select(s => s.User).DistinctBy(u => u!.UserID).ToList();
+        var mealList = dtoList.Select(s => s.Meal).DistinctBy(m => m!.MealID).ToList();
         List<CompanyMonthlyStatsDTO> result = new();
         if (!userList.IsNullOrEmpty() && !mealList.IsNullOrEmpty())
         {
@@ -131,7 +131,15 @@ public class MealManager : IMealManager
 
     public async Task<bool> EditMeal(List<ServingDTO> request)
     {
+        request = request.Where(s => s.MealID != 3).ToList();
         return await MealDAO.EditMeal(Mapper.Map<List<Serving>>(request));
+    }
+
+    //Not fully thought out yet
+    public async Task<bool> EditMeal3rdShift(List<ServingDTO> request)
+    {
+        request = request.Where(s => s.MealID == 3).ToList();
+        return await MealDAO.EditMeal3rdShift(Mapper.Map<List<Serving>>(request));
     }
 
     public async Task<bool> DeleteMeal(int servingID)

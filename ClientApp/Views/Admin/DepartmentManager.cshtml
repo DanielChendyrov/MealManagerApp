@@ -29,11 +29,24 @@
                                     <td>@i</td>
                                     <td>
                                         <p id="@d.DepID">@d.DepName</p>
-                                        <input type="hidden" class="form-control" name="@("DepName[" + i + "]")" id="@("DepName" + d.DepID)" disabled>
-                                        <input type="hidden" class="form-control" name="@("DepID[" + i + "]")" id="@("DepID" + d.DepID)" value="@d.DepID" disabled>
+                                        <input type="hidden"
+                                               class="form-control"
+                                               name="@("DepName[" + i + "]")"
+                                               id="@("DepName" + d.DepID)"
+                                               disabled>
+                                        <input type="hidden"
+                                               class="form-control"
+                                               name="@("DepID[" + i + "]")"
+                                               id="@("DepID" + d.DepID)"
+                                               value="@d.DepID"
+                                               disabled>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-light far fa-edit" name="EditBtn" id="@("Edit" + d.DepID)"></button>
+                                        <button type="button"
+                                                class="btn btn-light far fa-edit"
+                                                name="EditBtn"
+                                                id="@("Edit" + d.DepID)">
+                                        </button>
                                         <a type="button"
                                            class="btn btn-light far fa-trash-alt"
                                            name="DeleteBtn"

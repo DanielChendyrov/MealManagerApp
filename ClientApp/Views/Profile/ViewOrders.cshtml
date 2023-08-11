@@ -47,46 +47,57 @@
                                                 {
                                                     if (s.MealID == m.MealID)
                                                     {
-                                                        <td>
-                                                            <p id="@s.ServingID">@s.Quantity</p>
-                                                            <input type="hidden"
-                                                                   class="form-control quantity"
-                                                                   name="@("Orders[" + i + "].Servings[" + j + "].Quantity")"
-                                                                   id="@("Quantity" + s.ServingID)"
-                                                                   disabled>
-                                                            <input type="hidden"
-                                                                   name="@("Orders[" + i + "].Servings[" + j + "].ServingID")"
-                                                                   id="@("ServingID" + s.ServingID)"
-                                                                   value="@s.ServingID"
-                                                                   disabled>
-                                                            <input type="hidden"
-                                                                   class="timeField"
-                                                                   name="@("Orders[" + i + "].Servings[" + j + "].Meal.Time")"
-                                                                   id="@("Time" + s.ServingID)"
-                                                                   value="@s.Meal!.Time">
-                                                            <div class="d-flex justify-content-start">
-                                                                <div>
-                                                                    <button type="button"
-                                                                            class="btn btn-light far fa-edit"
-                                                                            name="EditBtn"
-                                                                            id="@("Edit" + s.ServingID)">
-                                                                    </button>
+                                                        if (s.MealID != 3)
+                                                        {
+                                                            <td>
+                                                                <p id="@s.ServingID">@s.Quantity</p>
+                                                                <input type="hidden"
+                                                                       class="form-control quantity"
+                                                                       name="@("Orders[" + i + "].Servings[" + j + "].Quantity")"
+                                                                       id="@("Quantity" + s.ServingID)"
+                                                                       disabled>
+                                                                <input type="hidden"
+                                                                       name="@("Orders[" + i + "].Servings[" + j + "].ServingID")"
+                                                                       id="@("ServingID" + s.ServingID)"
+                                                                       value="@s.ServingID"
+                                                                       disabled>
+                                                                <input type="hidden"
+                                                                       class="dateField"
+                                                                       name="@("Orders[" + i + "].Servings[" + j + "].BookedDate")"
+                                                                       id="@("BookedDate" + s.ServingID)"
+                                                                       value="@s.BookedDate">
+                                                                <input type="hidden"
+                                                                       class="timeField"
+                                                                       name="@("Orders[" + i + "].Servings[" + j + "].Meal.Time")"
+                                                                       id="@("Time" + s.ServingID)"
+                                                                       value="@s.Meal!.Time">
+                                                                <div class="d-flex justify-content-start">
+                                                                    <div>
+                                                                        <button type="button"
+                                                                                class="btn btn-light far fa-edit"
+                                                                                name="EditBtn"
+                                                                                id="@("Edit" + s.ServingID)">
+                                                                        </button>
+                                                                    </div>
+                                                                    <div>
+                                                                        <a type="button"
+                                                                           class="btn btn-light far fa-trash-alt"
+                                                                           name="DeleteBtn"
+                                                                           id="@("Delete" + s.ServingID)"
+                                                                           href="@("DeleteOrder?servingID=" + s.ServingID)">
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
-                                                                <div>
-                                                                    <a type="button"
-                                                                       class="btn btn-light far fa-trash-alt"
-                                                                       name="DeleteBtn"
-                                                                       id="@("Delete" + s.ServingID)"
-                                                                       href="@("DeleteOrder?servingID=" + s.ServingID)">
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        j++;
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
+                                                            </td>
+                                                            j++;
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <p id="@s.ServingID">@s.Quantity</p>
+                                                            </td>
+                                                            j++;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -99,7 +110,12 @@
                     </tbody>
                 </table>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class="me-2">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                    <div>
+                        <button type="button" id="cancelBtn" class="btn btn-danger" disabled>Huỷ</button>
+                    </div>
                 </div>
             </form>
         }
@@ -119,12 +135,21 @@
                 var quantityInput = document.getElementById("Quantity" + editBtn.id.substring(4));
                 var idInput = document.getElementById("ServingID" + editBtn.id.substring(4));
                 var timeInput = document.getElementById("Time" + editBtn.id.substring(4));
+                var cancelBtn = document.getElementById("cancelBtn");
+
                 if (quantityInput.disabled === true || quantityInput.type === "hidden") {
                     quantityInput.disabled = false;
                     quantityInput.type = "text";
                     quantityInput.value = text.innerHTML;
                     idInput.disabled = false;
                     text.style.display = "none";
+                    cancelBtn.disabled = false;
+                }
+            }
+
+            if (event.target.id === "cancelBtn") {
+                if (event.target.disabled == false) {
+                    location.reload();
                 }
             }
         });
@@ -151,13 +176,20 @@
         });
 
         function checkTime() {
-            var timeInputs = document.getElementsByClassName("timeField");
-            for (var t of timeInputs) {
-                var editBtn = document.getElementById("Edit" + t.id.substring(4));
-                var deleteBtn = document.getElementById("Delete" + t.id.substring(4));
-                if (new Date(currentDate).getHours() + 1 <= t.value.slice(0, 2)) {
-                    editBtn.disabled = true;
-                    deleteBtn.disabled = true;
+            var currentDate = new Date();
+            var dateInputs = document.getElementsByClassName("dateField");
+            for (var d of dateInputs) {
+                var editBtn = document.getElementById("Edit" + d.id.substring(10));
+                var deleteBtn = document.getElementById("Delete" + d.id.substring(10));
+                if (currentDate.getDate() > d.value) {
+                    editBtn = true;
+                    deleteBtn = true;
+                } else if (currentDate.getDate() == d.value) {
+                    var timeInput = document.getElementById("Time" + d.id.substring(10));
+                    if (currentDate.getHours() > timeInput.value.substring(2)) {
+                        editBtn = true;
+                        deleteBtn = true;
+                    }
                 }
             }
         }

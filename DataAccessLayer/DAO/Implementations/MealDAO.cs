@@ -279,6 +279,31 @@ public class MealDAO : IMealDAO
         return await DbContext.ExecuteNonQueryAsync(query);
     }
 
+    public async Task<bool> EditMeal3rdShift(List<Serving> request)
+    {
+        string query = $@"declare @sum int";
+        var dateList = request.DistinctBy(s => s.BookedDate).ToList();
+        foreach (var d in dateList)
+        {
+            var tmp = request.Where(s => s.BookedDate == d.BookedDate).ToList();
+            var quantitySum = tmp.Select(s => s.Quantity).Sum();
+            query +=
+                $@"select @sum = 
+                    (select sum(Quantity) from Servings
+                    where MealID = 3 and BookedDate = '')
+                if @sum = 6
+                    begin
+                        update Servings
+                            set Quantity = ''
+                        from Servings s, Meals m
+                        where s.MealID = m.MealID
+                            and ServingID = ''
+                            and s.BookedDate + convert(datetime, m.[Time]) > sysdatetime()
+                    end";
+        }
+        return await DbContext.ExecuteNonQueryAsync(query);
+    }
+
     public async Task<bool> DeleteMeal(int servingID)
     {
         string query =

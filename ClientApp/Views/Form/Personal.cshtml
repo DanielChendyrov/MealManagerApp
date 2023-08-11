@@ -44,9 +44,20 @@
                                 <label for="@m.MealID" class="form-check-label">@m.MealName</label>
                             </div>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control quantity" id="@("Quantity" + m.MealID)" name="@("Servings[" + i + "].Quantity")" disabled>
-                                <input type="hidden" id="@("MealID" + m.MealID)" name="@("Servings[" + i + "].MealID")" value="@m.MealID" disabled>
-                                <input type="hidden" id="@("MealTime" + m.MealID)" name="@("Servings[" + i + "].Meal.Time")" value="@m.Time">
+                                <input type="text"
+                                       class="form-control quantity"
+                                       id="@("Quantity" + m.MealID)"
+                                       name="@("Servings[" + i + "].Quantity")"
+                                       disabled>
+                                <input type="hidden"
+                                       id="@("MealID" + m.MealID)"
+                                       name="@("Servings[" + i + "].MealID")"
+                                       value="@m.MealID"
+                                       disabled>
+                                <input type="hidden"
+                                       id="@("MealTime" + m.MealID)"
+                                       name="@("Servings[" + i + "].Meal.Time")"
+                                       value="@m.Time">
                             </div>
                         </div>
                         i++;
@@ -87,13 +98,13 @@
             }
 
             if (event.target.name === "BookedDate") {
-                var currentDate = "@Model.CurrentDate";
-                var inputDate = new Date(new Date(event.target.value).toDateString());
-                if (Date.parse(inputDate) < Date.parse(currentDate)) {
-                    event.target.value = currentDate.slice(0, 10);
+                var currentDate = new Date();
+                var inputDate = new Date(event.target.value);
+                if (Date.parse(inputDate) < Date.parse(currentDate.toISOString().slice(0, 10))) {
+                    event.target.value = currentDate.toISOString().slice(0, 10);
                     checkTime(currentDate);
                     alert("Không thể đăng ký cho quá khứ.")
-                } else if (Date.parse(inputDate) == Date.parse(currentDate)) {
+                } else if (Date.parse(inputDate) == Date.parse(currentDate.toISOString().slice(0, 10))) {
                     checkTime(currentDate);
                 } else {
                     for (var mc of document.getElementsByName("toggleCheck")) {
@@ -138,15 +149,15 @@
         });
 
         document.addEventListener("DOMContentLoaded", function () {
-            currentDate = "@Model.CurrentDate";
-            document.getElementById("bookedDate").value = currentDate.slice(0, 10);
+            currentDate = new Date();
+            document.getElementById("bookedDate").value = currentDate.toISOString().slice(0, 10);
             checkTime(currentDate);
         });
 
         function checkTime(currentDate) {
             for (var mc of document.getElementsByName("toggleCheck")) {
                 var timeString = document.getElementById("MealTime" + mc.id).value;
-                if (new Date(currentDate).getHours() + 1 > timeString.slice(0, 2)) {
+                if (currentDate.getHours() >= timeString.slice(0, 2)) {
                     mc.checked = false;
                     mc.disabled = true;
                 } else {

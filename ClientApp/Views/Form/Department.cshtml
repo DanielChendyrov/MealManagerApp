@@ -58,13 +58,30 @@
                                     <td>
                                         <div class="d-inline-flex">
                                             <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="@("Check" + m.MealID + "User" + u.UserID)" name="toggleCheck">
+                                                <input type="checkbox"
+                                                       class="form-check-input"
+                                                       id="@("Check" + m.MealID + "User" + u.UserID)"
+                                                       name="toggleCheck">
                                             </div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control quantity" id="@("Quantity" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Quantity")" disabled>
-                                                <input type="hidden" id="@("User" + u.UserID)" name="RegUserID" name="@("Servings[" + i + "].UserID")" value="@u.UserID">
-                                                <input type="hidden" id="@("MealID" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].MealID")" value="@m.MealID" disabled>
-                                                <input type="hidden" id="@("MealTime" + m.MealID + "User" + u.UserID)" name="@("Servings[" + i + "].Meal.Time")" value="@m.Time">
+                                                <input type="text"
+                                                       class="form-control quantity"
+                                                       id="@("Quantity" + m.MealID + "User" + u.UserID)"
+                                                       name="@("Servings[" + i + "].Quantity")"
+                                                       disabled>
+                                                <input type="hidden"
+                                                       id="@("User" + u.UserID)"
+                                                       name="@("Servings[" + i + "].UserID")"
+                                                       value="@u.UserID">
+                                                <input type="hidden"
+                                                       id="@("MealID" + m.MealID + "User" + u.UserID)"
+                                                       name="@("Servings[" + i + "].MealID")"
+                                                       value="@m.MealID"
+                                                       disabled>
+                                                <input type="hidden"
+                                                       id="@("MealTime" + m.MealID + "User" + u.UserID)"
+                                                       name="@("Servings[" + i + "].Meal.Time")"
+                                                       value="@m.Time">
                                             </div>
                                         </div>
                                     </td>
@@ -106,13 +123,13 @@
             }
 
             if (event.target.name === "BookedDate") {
-                var currentDate = "@Model.CurrentDate";
-                var inputDate = event.target.value;
-                if (Date.parse(inputDate) < Date.parse(currentDate.slice(0, 10))) {
-                    event.target.value = currentDate.slice(0, 10);
+                var currentDate = new Date();
+                var inputDate = new Date(event.target.value);
+                if (Date.parse(inputDate) < Date.parse(currentDate.toISOString().slice(0, 10))) {
+                    event.target.value = currentDate.toISOString().slice(0, 10)
                     checkTime(currentDate);
                     alert("Không thể đăng ký cho quá khứ.")
-                } else if (Date.parse(inputDate) == Date.parse(currentDate)) {
+                } else if (Date.parse(inputDate) == Date.parse(currentDate.toISOString().slice(0, 10))) {
                     checkTime(currentDate);
                 } else {
                     for (var mc of document.getElementsByName("toggleCheck")) {
@@ -140,7 +157,6 @@
                         </text>
                     }
                 }
-
                 if (existing.length > 0) {
                     for (var s of existing) {
                         var check = document.getElementById("Check" + s.MealID + "User" + s.UserID);
@@ -160,8 +176,8 @@
         });
 
         document.addEventListener("DOMContentLoaded", function () {
-            currentDate = "@Model.CurrentDate";
-            document.getElementById("bookedDate").value = currentDate.slice(0, 10);
+            currentDate = new Date();
+            document.getElementById("bookedDate").value = currentDate.toISOString().slice(0, 10);
             checkTime(currentDate);
         });
 
@@ -176,7 +192,7 @@
                         mc.id.indexOf("r") + 1
                     )).value;
 
-                if (new Date(currentDate).getHours() + 1 > timeString.slice(0, 2)) {
+                if (currentDate.getHours() >= timeString.slice(0, 2)) {
                     mc.checked = false;
                     mc.disabled = true;
                 } else {

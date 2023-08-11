@@ -44,11 +44,18 @@
                                 <th scope="row">@i</th>
                                 <td>
                                     <p>@u.FullName</p>
-                                    <input type="hidden" id="@("UserID" + u.UserID)" name="@("Users[" + u.UserID + "].UserID")" value="@u.UserID" disabled>
+                                    <input type="hidden"
+                                           id="@("UserID" + u.UserID)"
+                                           name="@("Users[" + u.UserID + "].UserID")"
+                                           value="@u.UserID"
+                                           disabled>
                                 </td>
                                 <td>
                                     <p class="@("displayText" + u.UserID)">@u.Dep!.DepName</p>
-                                    <select class="@("form-select select" + u.UserID)" name="@("Users[" + u.UserID + "].DepID")" style="display:none" disabled>
+                                    <select class="@("form-select select" + u.UserID)"
+                                            name="@("Users[" + u.UserID + "].DepID")"
+                                            style="display:none"
+                                            disabled>
                                         @foreach (var d in Model.Departments)
                                         {
                                             <option value="@d.DepID">@d.DepName</option>
@@ -57,7 +64,10 @@
                                 </td>
                                 <td>
                                     <p class="@("displayText" + u.UserID)">@u.CompRole!.CompRoleName</p>
-                                    <select class="@("form-select select" + u.UserID)" name="@("Users[" + u.UserID + "].CompRoleID")" style="display:none" disabled>
+                                    <select class="@("form-select select" + u.UserID)"
+                                            name="@("Users[" + u.UserID + "].CompRoleID")"
+                                            style="display:none"
+                                            disabled>
                                         @foreach (var c in Model.CompRoles)
                                         {
                                             <option value="@c.CompRoleID">@c.CompRoleName</option>
@@ -66,7 +76,10 @@
                                 </td>
                                 <td>
                                     <p class="@("displayText" + u.UserID)">@u.SysRole!.SysRoleName</p>
-                                    <select class="@("form-select select" + u.UserID)" name="@("Users[" + u.UserID + "].SysRoleID")" style="display:none" disabled>
+                                    <select class="@("form-select select" + u.UserID)"
+                                            name="@("Users[" + u.UserID + "].SysRoleID")"
+                                            style="display:none"
+                                            disabled>
                                         @foreach (var s in Model.SysRoles)
                                         {
                                             <option value="@s.SysRoleID">@s.SysRoleName</option>
