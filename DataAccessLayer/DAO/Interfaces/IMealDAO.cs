@@ -14,4 +14,5 @@ public interface IMealDAO
     Task<bool> EditMeal(List<Serving> request);
     Task<bool> DeleteMeal(int servingID);
     Task<bool> EditMeal3rdShift(List<Serving> request);
+    Task<List<Serving>> GetAll3rdShiftMeals(DateTime bookedDate, int depID);
 }

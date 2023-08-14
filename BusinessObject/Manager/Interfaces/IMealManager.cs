@@ -17,4 +17,5 @@ public interface IMealManager
     Task<bool> EditMeal(List<ServingDTO> request);
     Task<bool> DeleteMeal(int servingID);
     Task<bool> EditMeal3rdShift(List<ServingDTO> request);
+    Task<List<ServingDTO>> GetAll3rdShiftMeals(DateTime bookedDate, int depID);
 }

@@ -38,13 +38,77 @@
                             <tr>
                                 <td>@i</td>
                                 <td>@s.User!.FullName</td>
-                                <td>@s.Quantity</td>
+                                <td>
+                                    <p id="@s.ServingID">@s.Quantity</p>
+                                    <input type="hidden"
+                                           class="form-control"
+                                           id="@("Quantity" + s.ServingID)"
+                                           name="@("Servings[" + i + "].Quantity")"
+                                           disabled>
+                                    <input type="hidden"
+                                           class="form-control"
+                                           id="@("ServingID" + s.ServingID)"
+                                           name="@("Servings[" + i + "].ServingID")"
+                                           value="@s.ServingID"
+                                           disabled>
+                                </td>
+                                <td>
+                                    <div>
+                                        <button type="button"
+                                                class="btn btn-light far fa-edit"
+                                                name="EditBtn"
+                                                id="@("Edit" + s.ServingID)">
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                             i++;
                         }
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-center">
+                    <div class="me-2">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                    <div>
+                        <button type="button" id="cancelBtn" class="btn btn-danger" disabled>Huỷ</button>
+                    </div>
+                </div>
             </form>
         }
     </div>
 </div>
+
+@section scripts {
+    <script type="text/javascript">
+        document.addEventListener("click", function (event) {
+            if (event.target.name === "EditBtn") {
+                var editBtn = event.target;
+                var quantityInput = document.getElementById("Quantity" + editBtn.id.substring(4));
+                var quantityText = document.getElementById(editBtn.id.substring(4));
+                var idInput = document.getElementById("ServingID" + editBtn.id.substring(4));
+                var cancelBtn = document.getElementById("cancelBtn");
+
+                if (quantityInput.disabled == true) {
+                    quantityInput.disabled = false;
+                    quantityInput.type = "text";
+                    quantityInput.value = quantityText.innerHTML;
+                    quantityText.style.display = "none";
+                    idInput.disabled = false;
+                    cancelBtn.disabled = false;
+                }
+            }
+
+            if (event.target.id === "cancelBtn") {
+                if (event.target.disabled == false) {
+                    location.reload();
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            currentDate = "@Model.BookedDate.ToString("yyyy-MM-dd")";
+            document.getElementById("filterDate").value = currentDate.slice(0, 10);
+        });
+    </script>
+}

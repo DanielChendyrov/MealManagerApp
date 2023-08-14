@@ -200,15 +200,49 @@ public class ProfileController : Controller
         }
     }
 
-    public async Task<IActionResult> Manage3rdShift()
+    public async Task<IActionResult> Manage3rdShift(CustomOrder model)
     {
         int? userID = HttpContext.Session.GetInt32("UserID");
+        int? depID = HttpContext.Session.GetInt32("DepID");
         string? compRole = HttpContext.Session.GetString("CompRole");
         if (userID == null || userID <= 0 || compRole != "Tập thể")
         {
             return Redirect("/Home");
         }
 
-        return View();
+        if (model.BookedDate < DateTime.Now)
+        {
+            model.BookedDate = DateTime.Now;
+        }
+        var servingGet = await RequestHandler.GetAsync(
+            "Meal/GetAll3rdShiftMeals/"
+                + model.BookedDate.ToString("yyyy-MM-dd")
+                + "/"
+                + Convert.ToInt32(depID),
+            HttpContext.Session.GetString("Jwt")!
+        );
+
+        if (servingGet.IsSuccessStatusCode)
+        {
+            if (servingGet.ReasonPhrase != "No Content")
+            {
+                var servingList = await servingGet.Content.ReadFromJsonAsync<List<ServingModel>>();
+                model.Servings = servingList!;
+            }
+        }
+        return View(model);
+    }
+
+    public async Task<IActionResult> Edit3rdShift(CustomOrder model)
+    {
+        int? userID = HttpContext.Session.GetInt32("UserID");
+        int? depID = HttpContext.Session.GetInt32("DepID");
+        string? compRole = HttpContext.Session.GetString("CompRole");
+        if (userID == null || userID <= 0 || compRole != "Tập thể")
+        {
+            return Redirect("/Home");
+        }
+
+        return RedirectToAction("Manage3rdShift");
     }
 }

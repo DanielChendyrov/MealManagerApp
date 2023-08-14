@@ -102,6 +102,11 @@ public class MealManager : IMealManager
         return Mapper.Map<List<ServingDTO>>(await MealDAO.FindExistingRegistration(depID));
     }
 
+    public async Task<List<ServingDTO>> GetAll3rdShiftMeals(DateTime bookedDate, int depID)
+    {
+        return Mapper.Map<List<ServingDTO>>(await MealDAO.GetAll3rdShiftMeals(bookedDate, depID));
+    }
+
     public async Task<bool> RegisterPersonalMeal(FormDTO request)
     {
         request.Servings = request.Servings

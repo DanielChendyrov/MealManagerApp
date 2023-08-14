@@ -113,6 +113,25 @@ public class MealController : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("{bookedDate}/{depID}")]
+    public async Task<IActionResult> GetAll3rdShiftMeals(DateTime bookedDate, int depID)
+    {
+        try
+        {
+            var result = await MealManager.GetAll3rdShiftMeals(bookedDate, depID);
+            if (result.IsNullOrEmpty())
+            {
+                return NoContent();
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> RegisterPersonalMeal(FormDTO request)
     {

@@ -40,8 +40,9 @@ public class MealDAO : IMealDAO
     {
         string query =
             $@"select s.ServingID, s.Quantity, s.BookedDate,
-	            s.FormID, s.UserID, m.* from Servings s
-            join Meals m on m.MealID = s.MealID
+	            s.FormID, s.UserID, m.*
+            from Servings s
+                join Meals m on m.MealID = s.MealID
             where UserID = {uid} and month(s.BookedDate) = month(convert(date, sysdatetime()))
 	            and year(s.BookedDate) = year(convert(date, sysdatetime()))
             order by s.BookedDate, m.MealID";
@@ -75,10 +76,11 @@ public class MealDAO : IMealDAO
     public async Task<List<Serving>> GetCompanyDailyStats(DateTime requestDate)
     {
         string query =
-            $@"select u.UserID, u.FullName, d.*, m.*, s.Quantity from Servings s
-            join Meals m on m.MealID = s.MealID
-            join Users u on u.UserID = s.UserID
-            join Departments d on d.DepID = u.DepID
+            $@"select u.UserID, u.FullName, d.*, m.*, s.Quantity
+            from Servings s
+                join Meals m on m.MealID = s.MealID
+                join Users u on u.UserID = s.UserID
+                join Departments d on d.DepID = u.DepID
             where cast(s.BookedDate as date) = '{requestDate:yyyy-MM-dd}'
             order by m.MealID, d.DepName, u.FullName";
         List<Serving> response = new();
@@ -119,11 +121,12 @@ public class MealDAO : IMealDAO
     public async Task<List<Serving>> GetCompanyMonthlyStats(DateTime requestDate)
     {
         string query =
-            $@"select u.UserID, u.FullName, s.Quantity, s.BookedDate,
-                m.*, d.* from Servings s
-            join Users u on u.UserID = s.UserID
-            join Departments d on d.DepID = u.DepID
-            join Meals m on m.MealID = s.MealID
+            $@"select u.UserID, u.FullName,
+                s.Quantity, s.BookedDate, m.*, d.* 
+            from Servings s
+                join Users u on u.UserID = s.UserID
+                join Departments d on d.DepID = u.DepID
+                join Meals m on m.MealID = s.MealID
             where month(s.BookedDate) = month('{requestDate:yyyy-MM-dd}')
                 and year(s.BookedDate) = year('{requestDate:yyyy-MM-dd}')
             order by d.DepName, u.FullName, m.MealID";
@@ -167,9 +170,9 @@ public class MealDAO : IMealDAO
     {
         string query =
             $@"select s.ServingID, s.Quantity, s.BookedDate, m.*, u.UserID, u.FullName, u.DepID
-	            from Servings s
-            join Users u on u.UserID = s.UserID
-            join Meals m on m.MealID = s.MealID
+	        from Servings s
+                join Users u on u.UserID = s.UserID
+                join Meals m on m.MealID = s.MealID
             where u.DepID = {depID}";
         List<Serving> response = new();
         using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
@@ -195,6 +198,42 @@ public class MealDAO : IMealDAO
                             MealId = Convert.ToInt32(reader["MealID"]),
                             MealName = reader["MealName"].ToString()!,
                             Time = (TimeSpan)reader["Time"],
+                        },
+                    }
+                );
+            }
+        }
+        return response;
+    }
+
+    public async Task<List<Serving>> GetAll3rdShiftMeals(DateTime bookedDate, int depID)
+    {
+        string query =
+            $@"select s.*, u.UserID, u.FullName, u.DepID, u.IsDeleted
+            from Servings s
+                join Users u on s.UserID = u.UserID
+            where u.DepID = {depID}
+                and s.MealID = 3
+                and s.BookedDate = '{bookedDate:yyyy-MM-dd}'
+                and u.IsDeleted = 0";
+        List<Serving> response = new();
+        using (SqlDataReader reader = await DbContext.ExecuteQueryAsync(query))
+        {
+            while (reader.Read())
+            {
+                response.Add(
+                    new()
+                    {
+                        ServingId = Convert.ToInt32(reader["ServingID"]),
+                        Quantity = Convert.ToInt32(reader["Quantity"]),
+                        BookedDate = Convert.ToDateTime(reader["BookedDate"]),
+                        UserId = Convert.ToInt32(reader["UserID"]),
+                        MealId = Convert.ToInt32(reader["MealID"]),
+                        User = new()
+                        {
+                            UserId = Convert.ToInt32(reader["UserID"]),
+                            FullName = reader["FullName"].ToString()!,
+                            DepId = Convert.ToInt32(reader["DepID"]),
                         },
                     }
                 );
