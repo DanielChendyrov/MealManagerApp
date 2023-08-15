@@ -106,6 +106,17 @@
             }
         });
 
+        document.addEventListener("change", function (event) {
+            if (event.target.name === "BookedDate") {
+                var currentDate = new Date();
+                var inputDate = new Date(event.target.value);
+                if (Date.parse(inputDate) < Date.parse(currentDate.toISOString().slice(0, 10))) {
+                    event.target.value = currentDate.toISOString().slice(0, 10);
+                    alert("Không thể xem các đơn đặt trong quá khứ.")
+                }
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             currentDate = "@Model.BookedDate.ToString("yyyy-MM-dd")";
             document.getElementById("filterDate").value = currentDate.slice(0, 10);

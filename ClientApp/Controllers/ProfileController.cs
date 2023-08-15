@@ -235,14 +235,29 @@ public class ProfileController : Controller
 
     public async Task<IActionResult> Edit3rdShift(CustomOrder model)
     {
-        int? userID = HttpContext.Session.GetInt32("UserID");
-        int? depID = HttpContext.Session.GetInt32("DepID");
-        string? compRole = HttpContext.Session.GetString("CompRole");
-        if (userID == null || userID <= 0 || compRole != "Tập thể")
+        try
         {
-            return Redirect("/Home");
-        }
+            int? userID = HttpContext.Session.GetInt32("UserID");
+            int? depID = HttpContext.Session.GetInt32("DepID");
+            string? compRole = HttpContext.Session.GetString("CompRole");
+            if (userID == null || userID <= 0 || compRole != "Tập thể")
+            {
+                return Redirect("/Home");
+            }
 
-        return RedirectToAction("Manage3rdShift");
+            if (ModelState.IsValid)
+            {
+                var response = await RequestHandler.PutAsync(
+                    "Meal/EditMeal3rdShift",
+                    model.Servings,
+                    HttpContext.Session.GetString("Jwt")!
+                );
+            }
+            return RedirectToAction("Manage3rdShift");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 }

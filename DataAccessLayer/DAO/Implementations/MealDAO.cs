@@ -329,16 +329,20 @@ public class MealDAO : IMealDAO
             query +=
                 $@"select @sum = 
                     (select sum(Quantity) from Servings
-                    where MealID = 3 and BookedDate = '')
-                if @sum = 6
-                    begin
-                        update Servings
-                            set Quantity = ''
-                        from Servings s, Meals m
-                        where s.MealID = m.MealID
-                            and ServingID = ''
-                            and s.BookedDate + convert(datetime, m.[Time]) > sysdatetime()
-                    end";
+                    where MealID = 3 and BookedDate = {d})";
+            foreach (var s in tmp)
+            {
+                query +=
+                    $@"if @sum = {quantitySum}
+                        begin
+                            update Servings
+                                set Quantity = {s.Quantity}
+                            from Servings s, Meals m
+                            where s.MealID = m.MealID
+                                and ServingID = {s.ServingId}
+                                and s.BookedDate + convert(datetime, m.[Time]) > sysdatetime()
+                        end";
+            }
         }
         return await DbContext.ExecuteNonQueryAsync(query);
     }
