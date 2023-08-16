@@ -24,7 +24,7 @@ public class DepartmentDAO : IDepartmentDAO
             while (reader.Read())
             {
                 response.Add(
-                    new Department
+                    new()
                     {
                         DepId = Convert.ToInt32(reader["DepID"]),
                         DepName = reader["DepName"].ToString()!,

@@ -87,18 +87,6 @@ public class AdminController : Controller
         }
     }
 
-    public IActionResult InterfaceManager()
-    {
-        int? userID = HttpContext.Session.GetInt32("UserID");
-        string? sysRole = HttpContext.Session.GetString("SysRole");
-        if (userID == null || userID <= 0 || sysRole != "Admin")
-        {
-            return Redirect("/Home");
-        }
-
-        return View();
-    }
-
     public async Task<IActionResult> UserManager(UserManagerModel model)
     {
         int? userID = HttpContext.Session.GetInt32("UserID");

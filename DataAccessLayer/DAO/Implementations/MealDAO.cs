@@ -24,7 +24,7 @@ public class MealDAO : IMealDAO
             while (reader.Read())
             {
                 response.Add(
-                    new Meal
+                    new()
                     {
                         MealId = Convert.ToInt32(reader["MealID"]),
                         MealName = reader["MealName"].ToString()!,
@@ -52,7 +52,7 @@ public class MealDAO : IMealDAO
             while (reader.Read())
             {
                 response.Add(
-                    new Serving
+                    new()
                     {
                         ServingId = Convert.ToInt32(reader["ServingID"]),
                         Quantity = Convert.ToInt32(reader["Quantity"]),
@@ -89,7 +89,7 @@ public class MealDAO : IMealDAO
             while (reader.Read())
             {
                 response.Add(
-                    new Serving
+                    new()
                     {
                         Quantity = Convert.ToInt32(reader["Quantity"]),
                         UserId = Convert.ToInt32(reader["UserID"]),
@@ -136,7 +136,7 @@ public class MealDAO : IMealDAO
             while (reader.Read())
             {
                 response.Add(
-                    new Serving
+                    new()
                     {
                         Quantity = Convert.ToInt32(reader["Quantity"]),
                         UserId = Convert.ToInt32(reader["UserID"]),
@@ -180,7 +180,7 @@ public class MealDAO : IMealDAO
             while (reader.Read())
             {
                 response.Add(
-                    new Serving
+                    new()
                     {
                         ServingId = Convert.ToInt32(reader["ServingID"]),
                         Quantity = Convert.ToInt32(reader["Quantity"]),
@@ -282,7 +282,7 @@ public class MealDAO : IMealDAO
             while (reader.Read())
             {
                 response.Add(
-                    new Serving
+                    new()
                     {
                         ServingId = Convert.ToInt32(reader["ServingID"]),
                         Quantity = Convert.ToInt32(reader["Quantity"]),

@@ -23,7 +23,7 @@ public class RoleDAO : IRoleDAO
             while (reader.Read())
             {
                 response.Add(
-                    new CompanyRole
+                    new()
                     {
                         CompRoleId = Convert.ToInt32(reader["CompRoleID"]),
                         CompRoleName = reader["CompRoleName"].ToString()!,
@@ -43,7 +43,7 @@ public class RoleDAO : IRoleDAO
             while (reader.Read())
             {
                 response.Add(
-                    new SystemRole
+                    new()
                     {
                         SysRoleId = Convert.ToInt32(reader["SysRoleID"]),
                         SysRoleName = reader["SysRoleName"].ToString()!,

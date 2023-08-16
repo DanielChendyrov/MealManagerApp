@@ -29,7 +29,7 @@ public class UserDAO : IUserDAO
             while (reader.Read())
             {
                 response.Add(
-                    new User
+                    new()
                     {
                         UserId = Convert.ToInt32(reader["UserID"]),
                         FullName = reader["FullName"].ToString()!,
@@ -121,7 +121,7 @@ public class UserDAO : IUserDAO
             while (reader.Read())
             {
                 response.Add(
-                    new User
+                    new()
                     {
                         UserId = Convert.ToInt32(reader["UserID"]),
                         FullName = reader["FullName"].ToString()!,
